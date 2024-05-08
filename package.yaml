@@ -1,0 +1,88 @@
+name:               match-or-not
+version:            0.1.0.0
+author:             Jose Maria Landa Chavez
+maintainer:         josemaria.landa@gmail.com
+extra-source-files:
+  - README.md
+
+language: GHC2021
+
+ghc-options:
+  -W
+  -Wall
+  -Wincomplete-uni-patterns
+  -Wincomplete-record-updates
+  -fwrite-ide-info
+  -hiedir=.hie
+#  -Werror
+
+default-extensions:
+  - DataKinds
+  - DeriveAnyClass
+  - DerivingStrategies
+  - DerivingVia
+  - DuplicateRecordFields
+  - GADTs
+  - LambdaCase
+  - OverloadedRecordDot
+  - OverloadedStrings
+  - RecordWildCards
+  - TypeFamilies
+  - ViewPatterns
+
+library:
+  source-dirs:      src
+
+dependencies:
+  - base >= 4.14 && < 5
+  - aeson
+  - bcrypt
+  - bytestring
+  - co-log-core
+  - containers
+  - extra
+  - hasql
+  - hasql-transaction
+  - jose
+  - lens
+  - mtl
+  - openapi3
+  - optparse-applicative
+  - postgresql-error-codes
+  - rel8
+  - servant
+  - servant-auth
+  - servant-auth-server
+  - servant-openapi3
+  - servant-server
+  - text
+  - time
+  - tomland
+  - transformers
+  - uuid
+  - wai
+  - wai-cors
+  - wai-extra
+  - warp
+
+executables:
+  match-or-not-exe:
+    source-dirs:    app
+    main:           Main.hs
+    dependencies:
+      - match-or-not
+
+tests:
+  match-or-not-spec:
+    main:           Spec.hs
+    source-dirs:    spec
+    dependencies:
+      - match-or-not
+      - containers
+      - hspec
+      - http-client
+      - http-types
+      - servant-auth-client
+      - servant-client
+      - servant-client-core
+      - warp

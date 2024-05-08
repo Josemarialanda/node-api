@@ -1,0 +1,223 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           match-or-not
+version:        0.1.0.0
+author:         Jose Maria Landa Chavez
+maintainer:     josemaria.landa@gmail.com
+license:        MIT
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+
+library
+  exposed-modules:
+      API.Application
+      API.AppServices
+      API.Authentication
+      API.Config
+      API.Docs
+      API.Healthcheck
+      API.MatchOrNot
+      App
+      CLIOptions
+      Dependencies
+      Impl.Authentication.Authenticator
+      Impl.Repository.Content
+      Impl.Repository.Content.InMemory
+      Impl.Repository.Content.Postgres
+      Impl.Repository.User
+      Impl.Repository.User.Error
+      Impl.Repository.User.InMemory
+      Impl.Repository.User.Postgres
+      Infrastructure.Authentication.PasswordManager
+      Infrastructure.Authentication.Token
+      Infrastructure.Database
+      Infrastructure.Logging.Logger
+      Infrastructure.Persistence.Queries
+      Infrastructure.Persistence.Schema
+      Infrastructure.Persistence.Serializer
+      Infrastructure.SystemTime
+      MatchOrNot.Authentication.Authenticator
+      MatchOrNot.Authentication.Credentials
+      MatchOrNot.Content
+      MatchOrNot.EncryptedPassword
+      MatchOrNot.Id
+      MatchOrNot.JSONWebKey
+      MatchOrNot.Owned
+      MatchOrNot.Repository.Content
+      MatchOrNot.Repository.User
+      MatchOrNot.Tag
+      MatchOrNot.User
+      Middleware
+  other-modules:
+      Paths_match_or_not
+  hs-source-dirs:
+      src
+  default-extensions:
+      DataKinds
+      DeriveAnyClass
+      DerivingStrategies
+      DerivingVia
+      DuplicateRecordFields
+      GADTs
+      LambdaCase
+      OverloadedRecordDot
+      OverloadedStrings
+      RecordWildCards
+      TypeFamilies
+      ViewPatterns
+  ghc-options: -W -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -fwrite-ide-info -hiedir=.hie
+  build-depends:
+      aeson
+    , base >=4.14 && <5
+    , bcrypt
+    , bytestring
+    , co-log-core
+    , containers
+    , extra
+    , hasql
+    , hasql-transaction
+    , jose
+    , lens
+    , mtl
+    , openapi3
+    , optparse-applicative
+    , postgresql-error-codes
+    , rel8
+    , servant
+    , servant-auth
+    , servant-auth-server
+    , servant-openapi3
+    , servant-server
+    , text
+    , time
+    , tomland
+    , transformers
+    , uuid
+    , wai
+    , wai-cors
+    , wai-extra
+    , warp
+  default-language: GHC2021
+
+executable match-or-not-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_match_or_not
+  hs-source-dirs:
+      app
+  default-extensions:
+      DataKinds
+      DeriveAnyClass
+      DerivingStrategies
+      DerivingVia
+      DuplicateRecordFields
+      GADTs
+      LambdaCase
+      OverloadedRecordDot
+      OverloadedStrings
+      RecordWildCards
+      TypeFamilies
+      ViewPatterns
+  ghc-options: -W -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -fwrite-ide-info -hiedir=.hie
+  build-depends:
+      aeson
+    , base >=4.14 && <5
+    , bcrypt
+    , bytestring
+    , co-log-core
+    , containers
+    , extra
+    , hasql
+    , hasql-transaction
+    , jose
+    , lens
+    , match-or-not
+    , mtl
+    , openapi3
+    , optparse-applicative
+    , postgresql-error-codes
+    , rel8
+    , servant
+    , servant-auth
+    , servant-auth-server
+    , servant-openapi3
+    , servant-server
+    , text
+    , time
+    , tomland
+    , transformers
+    , uuid
+    , wai
+    , wai-cors
+    , wai-extra
+    , warp
+  default-language: GHC2021
+
+test-suite match-or-not-spec
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      MatchOrNotSpec
+      TestServices
+      Paths_match_or_not
+  hs-source-dirs:
+      spec
+  default-extensions:
+      DataKinds
+      DeriveAnyClass
+      DerivingStrategies
+      DerivingVia
+      DuplicateRecordFields
+      GADTs
+      LambdaCase
+      OverloadedRecordDot
+      OverloadedStrings
+      RecordWildCards
+      TypeFamilies
+      ViewPatterns
+  ghc-options: -W -Wall -Wincomplete-uni-patterns -Wincomplete-record-updates -fwrite-ide-info -hiedir=.hie
+  build-depends:
+      aeson
+    , base >=4.14 && <5
+    , bcrypt
+    , bytestring
+    , co-log-core
+    , containers
+    , extra
+    , hasql
+    , hasql-transaction
+    , hspec
+    , http-client
+    , http-types
+    , jose
+    , lens
+    , match-or-not
+    , mtl
+    , openapi3
+    , optparse-applicative
+    , postgresql-error-codes
+    , rel8
+    , servant
+    , servant-auth
+    , servant-auth-client
+    , servant-auth-server
+    , servant-client
+    , servant-client-core
+    , servant-openapi3
+    , servant-server
+    , text
+    , time
+    , tomland
+    , transformers
+    , uuid
+    , wai
+    , wai-cors
+    , wai-extra
+    , warp
+  default-language: GHC2021

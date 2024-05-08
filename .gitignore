@@ -1,0 +1,11 @@
+.direnv
+.hie
+.jwk
+.postgres
+.pre-commit-config.yaml
+.task
+result
+dist-newstyle
+
+# Ignore github actions (temp)
+.github
