@@ -1,4 +1,4 @@
-module Impl.Repository.Content.Postgres (repository) where
+module Impl.Content.Postgres (repository) where
 
 import Control.Monad (forM)
 import Control.Monad.IO.Class (liftIO)
@@ -15,12 +15,15 @@ import Infrastructure.Persistence.Serializer
   ( serializeContent
   , unserializeContent
   )
-import MatchOrNot.Content (Content, hasAllTags)
-import MatchOrNot.Id (Id (Id))
-import MatchOrNot.Owned (Owned (content))
-import MatchOrNot.Repository.Content (ContentRepository (..))
-import MatchOrNot.Tag (Tag)
-import MatchOrNot.User (User)
+import MatchOrNot.Content
+  ( Content
+  , ContentRepository (..)
+  , hasAllTags
+  )
+import MatchOrNot.Types.Id (Id (Id))
+import MatchOrNot.Types.Owned (Owned (value))
+import MatchOrNot.Types.Tag (Tag)
+import MatchOrNot.Types.User (User)
 
 -- |
 -- A 'ContentRepository' based on PostgreSQL
@@ -31,18 +34,16 @@ repository handle =
     , addContentWithTags = postgresAddContentWithTags handle
     }
 
-postgresSelectUserContentsByTags
-  :: DB.Handle -> Id User -> [Tag] -> ExceptT QueryError IO [Owned (Content Tag)]
+postgresSelectUserContentsByTags :: DB.Handle -> Id User -> [Tag] -> ExceptT QueryError IO [Owned (Content Tag)]
 postgresSelectUserContentsByTags handle userId tags = do
   -- Retrieve the user's contents data from the database
   userDBContents <- ExceptT $ DB.runQuery handle (DB.selectUserContents userId)
   -- Convert the contents data into their domain representation
   let userContents = uncurry3 unserializeContent <$> userDBContents
   -- Filter only the contents indexed by the provided tags
-  pure $ filter (hasAllTags tags . content) userContents
+  pure $ filter (hasAllTags tags . value) userContents
 
-postgresAddContentWithTags
-  :: DB.Handle -> Id User -> Content Tag -> ExceptT QueryError IO (Id (Content Tag))
+postgresAddContentWithTags :: DB.Handle -> Id User -> Content Tag -> ExceptT QueryError IO (Id (Content Tag))
 postgresAddContentWithTags handle userId content' = do
   -- Generate a UUID for the content
   contentUUID <- liftIO nextRandom

@@ -1,4 +1,4 @@
-module MatchOrNot.Id where
+module MatchOrNot.Types.Id (Id (..)) where
 
 import Data.Aeson (FromJSON, ToJSON)
 import Data.OpenApi (ToSchema)

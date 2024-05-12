@@ -1,8 +1,8 @@
-module MatchOrNot.Authentication.Authenticator where
+module MatchOrNot.Authentication.Authenticator (Authenticator (..), hoist) where
 
 import MatchOrNot.Authentication.Credentials (Credentials (..))
-import MatchOrNot.Id (Id)
-import MatchOrNot.User (User)
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.User (User)
 
 -- |
 -- 'AuthenticateUser' is a service which exposes the ability to authenticate a 'User' providing her 'Credentials'.

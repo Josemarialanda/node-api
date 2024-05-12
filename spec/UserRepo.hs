@@ -1,4 +1,4 @@
-module Impl.Repository.User.InMemory (Table, repository) where
+module UserRepo (Table, repository) where
 
 import Control.Monad.Except (throwError)
 import Control.Monad.IO.Class (liftIO)
@@ -22,11 +22,11 @@ import Hasql.Session
   , QueryError (QueryError)
   , ResultError (ServerError)
   )
-import Impl.Repository.User.Error (UserRepositoryError (..))
+import Impl.User.Error (UserRepositoryError (..))
 import Infrastructure.Persistence.Queries (WrongNumberOfResults (..))
 import MatchOrNot.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Id (Id (Id))
 import MatchOrNot.Repository.User (UserRepository (..))
+import MatchOrNot.Types.Id (Id (Id))
 import MatchOrNot.User (User (..))
 import PostgreSQL.ErrorCodes (unique_violation)
 import Servant (NoContent (NoContent))
@@ -43,6 +43,7 @@ repository userMap =
     , deleteUserById = inMemoryDeleteUser userMap
     , changePasswordById = inMemorychangePasswordById userMap
     , changeUsernameById = inMemorychangeUsernameById userMap
+    , getProfileById = undefined
     }
 
 inMemoryGetUserByName

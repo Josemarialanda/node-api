@@ -7,12 +7,12 @@ import API.AppServices
   , connectedUserRepository
   , encryptedPasswordManager
   )
+import ContentRepo qualified
 import GHC.Conc (newTVarIO)
-import Impl.Repository.Content qualified as Repo.Content
-import Impl.Repository.User qualified as Repo.User
-import Infrastructure.Logging.Logger as Logger
-import Infrastructure.SystemTime as SystemTime
+import Infrastructure.Logger as Logger (withHandle)
+import Infrastructure.SystemTime as SystemTime (withHandle)
 import Servant.Auth.Server (defaultJWTSettings, generateKey)
+import UserRepo qualified
 
 testServices :: IO AppServices
 testServices = do
@@ -22,14 +22,13 @@ testServices = do
   SystemTime.withHandle $ \timeHandle ->
     Logger.withHandle timeHandle $ \loggerHandle -> do
       let passwordManager' = encryptedPasswordManager loggerHandle $ defaultJWTSettings key
-      let userRepository' = Repo.User.inMemory userMap
-      let contentsRepository = Repo.Content.inMemory contentsMap
+      let userRepository' = UserRepo.repository userMap
+      let contentsRepository = ContentRepo.repository contentsMap
       pure $
         AppServices
           { jwtSettings = defaultJWTSettings key
           , passwordManager = passwordManager'
           , contentRepository = connectedContentRepository loggerHandle contentsRepository
           , userRepository = connectedUserRepository loggerHandle userRepository'
-          , authenticateUser =
-              connectedAuthenticateUser loggerHandle userRepository' passwordManager'
+          , authenticateUser = connectedAuthenticateUser loggerHandle userRepository' passwordManager'
           }

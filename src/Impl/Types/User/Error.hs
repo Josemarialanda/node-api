@@ -1,4 +1,4 @@
-module Impl.Repository.User.Error (UserRepositoryError (..)) where
+module Impl.Types.User.Error (UserRepositoryError (..)) where
 
 import Hasql.Session (QueryError (..))
 import Infrastructure.Persistence.Queries (WrongNumberOfResults)

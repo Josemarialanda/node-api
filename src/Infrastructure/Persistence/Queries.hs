@@ -1,4 +1,15 @@
-module Infrastructure.Persistence.Queries where
+module Infrastructure.Persistence.Queries
+  ( module Infrastructure.Types.Persistence.Queries
+  , addContentWithTags
+  , addUser
+  , changePasswordById
+  , changeUsernameById
+  , deleteUserById
+  , getUserProfile
+  , selectUserById
+  , selectUserByName
+  , selectUserContents
+  ) where
 
 import Data.List qualified as List (filter)
 import Data.Text (Text)
@@ -13,19 +24,25 @@ import Hasql.Transaction.Sessions
 import Infrastructure.Persistence.Schema
   ( Content (..)
   , ContentsTags (..)
+  , Profile
   , Tag (..)
   , User (..)
   , contentSchema
   , contentsTagsSchema
   , litContent
   , litTag
+  , profileSchema
+  , profileUserId
   , tagSchema
   , userId
   , userSchema
   )
+import Infrastructure.Types.Persistence.Queries
+  ( WrongNumberOfResults (..)
+  )
 import MatchOrNot.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Id (Id)
-import MatchOrNot.User qualified as Domain (User)
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.User qualified as Domain (User)
 import Rel8
   ( Delete (..)
   , Expr
@@ -164,13 +181,6 @@ addContentWithTags content tags = transaction Serializable Write $ do
 -- SELECT USER BY USERNAME
 
 -- |
--- Describes the possible error cases for queries that expect exactly one row as a result.
-data WrongNumberOfResults
-  = NoResults
-  | MoreThanOneResult
-  deriving (Show)
-
--- |
 -- Given a list of results, succeed if there is only one in the list, otherwise fail with the appropriate error message
 justOne :: [a Result] -> Either WrongNumberOfResults (a Result)
 justOne = \case
@@ -231,7 +241,7 @@ changeUsernameById userId' newUsername = statement () query
           , returning = pure ()
           }
 
--- DELETE USER--
+-- DELETE USER
 
 -- |
 -- Deletes a 'User' from the database given its 'Id'
@@ -253,3 +263,15 @@ deleteUserById userId' = statement () query
 -- Add a new 'User' in the database
 addUser :: User Expr -> Session ()
 addUser = statement () . add userSchema . pure
+
+-- GET USER PROFILE
+
+-- |
+-- Given a 'User' 'Id', retrieves the 'User' and its 'Profile'
+-- If in the database we find none or more the one user, it returns the appropriate error message
+getUserProfile :: Id Domain.User -> Session (Either WrongNumberOfResults (Profile Result))
+getUserProfile userId' = statement () query
+  where
+    query = fmap justOne . select $ do
+      profiles <- each profileSchema
+      filter (\profile -> profileUserId profile ==. lit userId') profiles

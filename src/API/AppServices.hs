@@ -1,43 +1,29 @@
-module API.AppServices where
+module API.AppServices (start) where
 
+import API.Types.AppServices (AppServices (..))
 import Control.Monad ((<=<))
 import Control.Monad.Except (throwError)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Except (ExceptT, runExceptT)
 import Crypto.JOSE.JWK (JWK)
 import Hasql.Session (QueryError)
-import Impl.Authentication.Authenticator qualified as Auth
-import Impl.Repository.Content as Repo.Content
-import Impl.Repository.User qualified as Repo.User
-import Impl.Repository.User.Error (UserRepositoryError (..))
-import Infrastructure.Authentication.PasswordManager
-  ( PasswordManager
-  , PasswordManagerError (..)
-  , bcryptPasswordManager
-  )
+import Impl.Authentication qualified as Auth
+import Impl.Content.Postgres qualified as ContentPostgres
+import Impl.User.Postgres qualified as UserPostgres
+import Infrastructure.Authentication.PasswordManager (PasswordManager, PasswordManagerError (..), bcryptPasswordManager)
 import Infrastructure.Authentication.PasswordManager qualified as PasswordManager
 import Infrastructure.Database qualified as DB
-import Infrastructure.Logging.Logger (logError, logWarning, withContext)
-import Infrastructure.Logging.Logger qualified as Logger
+import Infrastructure.Logger (logError, logWarning, withContext)
+import Infrastructure.Logger qualified as Logger
 import Infrastructure.Persistence.Queries (WrongNumberOfResults (..))
 import MatchOrNot.Authentication.Authenticator qualified as Auth
-import MatchOrNot.Repository.Content (ContentRepository)
-import MatchOrNot.Repository.Content qualified as ContentRepository
-import MatchOrNot.Repository.User (UserRepository)
-import MatchOrNot.Repository.User qualified as UserRepository
+import MatchOrNot.Content (ContentRepository)
+import MatchOrNot.Content qualified as ContentRepository
+import MatchOrNot.Types.User (UserRepository)
+import MatchOrNot.User qualified as UserRepository
 import Servant (Handler, err401, err403, err500)
 import Servant.Auth.Server (JWTSettings, defaultJWTSettings)
 import Prelude hiding (log)
-
--- |
--- Collection of services needed by the application to work
-data AppServices = AppServices
-  { jwtSettings :: JWTSettings
-  , passwordManager :: PasswordManager Handler
-  , contentRepository :: ContentRepository Handler
-  , userRepository :: UserRepository Handler
-  , authenticateUser :: Auth.Authenticator Handler
-  }
 
 -- |
 -- Lifts a computation from 'ExceptT e IO' to 'Handler a' using the provided 'handleError' function
@@ -58,14 +44,14 @@ connectedContentRepository logHandle =
 -- Lifts a 'UserRepository' fo the 'Handler' monad, handling all errors by logging them and returning a 500 response
 connectedUserRepository
   :: Logger.Handle
-  -> UserRepository (ExceptT UserRepositoryError IO)
+  -> UserRepository (ExceptT UserPostgres.UserRepositoryError IO)
   -> UserRepository Handler
 connectedUserRepository logHandle = UserRepository.hoist $ eitherTToHandler handleUserRepositoryError
   where
-    handleUserRepositoryError :: UserRepositoryError -> Handler a
+    handleUserRepositoryError :: UserPostgres.UserRepositoryError -> Handler a
     -- If the database error concerns a duplicate user, we return a 403 response
-    handleUserRepositoryError (DuplicateUserName e) = do
-      logWarning logHandle $ show (DuplicateUserName e)
+    handleUserRepositoryError (UserPostgres.DuplicateUserName e) = do
+      logWarning logHandle $ show (UserPostgres.DuplicateUserName e)
       throwError err403
     -- Otherwise, we return a 500 response
     handleUserRepositoryError e = do
@@ -76,7 +62,7 @@ connectedUserRepository logHandle = UserRepository.hoist $ eitherTToHandler hand
 -- Creates an 'AuthenticateUser' service injecting its dependencies and handling errors
 connectedAuthenticateUser
   :: Logger.Handle
-  -> UserRepository (ExceptT UserRepositoryError IO)
+  -> UserRepository (ExceptT UserPostgres.UserRepositoryError IO)
   -> PasswordManager Handler
   -> Auth.Authenticator Handler
 connectedAuthenticateUser logHandle userRepository' passwordManager' =
@@ -86,7 +72,7 @@ connectedAuthenticateUser logHandle userRepository' passwordManager' =
   where
     handleAuthenticationError :: Auth.Error -> Handler a
     -- If the user was not found, we return a 401 response
-    handleAuthenticationError (Auth.QueryError (UnexpectedNumberOfRows NoResults)) = do
+    handleAuthenticationError (Auth.QueryError (UserPostgres.UnexpectedNumberOfRows NoResults)) = do
       throwError err401
     -- If there was an error at the database level, we return a 500 response
     handleAuthenticationError (Auth.QueryError e) = do
@@ -117,23 +103,15 @@ encryptedPasswordManager logHandle =
 
 start :: DB.Handle -> Logger.Handle -> JWK -> AppServices
 start dbHandle logHandle key =
-  let logContext = flip withContext logHandle
-      passwordManager' =
-        encryptedPasswordManager (withContext "PasswordManager" logHandle) $
-          defaultJWTSettings key
-      dbUserRepository = Repo.User.postgres dbHandle
-  in AppServices
-      { jwtSettings = defaultJWTSettings key
-      , passwordManager = passwordManager'
-      , contentRepository =
-          connectedContentRepository
-            (logContext "ContentRepository")
-            (Repo.Content.postgres dbHandle)
-      , userRepository =
-          connectedUserRepository (logContext "UserRepository") dbUserRepository
-      , authenticateUser =
-          connectedAuthenticateUser
-            (logContext "AuthenticateUser")
-            dbUserRepository
-            passwordManager'
-      }
+  AppServices
+    { jwtSettings = defaultJWTSettings key
+    , passwordManager = passwordManager'
+    , contentRepository = connectedContentRepository (logContext "ContentRepository") dbContentRepository
+    , userRepository = connectedUserRepository (logContext "UserRepository") dbUserRepository
+    , authenticateUser = connectedAuthenticateUser (logContext "AuthenticateUser") dbUserRepository passwordManager'
+    }
+  where
+    logContext = flip withContext logHandle
+    passwordManager' = encryptedPasswordManager (withContext "PasswordManager" logHandle) $ defaultJWTSettings key
+    dbUserRepository = UserPostgres.repository dbHandle
+    dbContentRepository = ContentPostgres.repository dbHandle

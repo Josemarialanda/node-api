@@ -21,8 +21,7 @@ data CLIOptions = CLIOptions
   }
 
 parse :: IO CLIOptions
-parse =
-  execParser $ info (inputOptionsParser <**> helper) fullDesc
+parse = execParser $ info (inputOptionsParser <**> helper) fullDesc
 
 inputOptionsParser :: Parser CLIOptions
 inputOptionsParser =

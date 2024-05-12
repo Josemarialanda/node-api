@@ -1,5 +1,5 @@
-module Infrastructure.Logging.Logger
-  ( Handle
+module Infrastructure.Logger
+  ( module Infrastructure.Types.Logger
   , withHandle
   , withContext
   , logError
@@ -13,20 +13,14 @@ import Colog.Core (Severity (..), logStringStderr, logStringStdout, (<&))
 import Control.Exception (bracket)
 import Control.Monad (when)
 import Control.Monad.IO.Class (MonadIO)
-import Data.Text (Text)
 import Infrastructure.SystemTime (UTCTime)
 import Infrastructure.SystemTime qualified as SystemTime
+import Infrastructure.Types.Logger
+  ( Config (..)
+  , Context
+  , Handle (..)
+  )
 import Prelude hiding (log)
-
-newtype Config = Config {logLevel :: Severity}
-
-data Handle = Handle
-  { systemTimeHandle :: SystemTime.Handle
-  , localContext :: Maybe Context
-  , minLevel :: Severity
-  }
-
-type Context = Text
 
 -- |
 -- Uses dependencies to yield a handle
@@ -68,12 +62,9 @@ log level handle msg = do
   let formattedLine = format currentTime level (localContext handle) msg
   when (level >= minLevel handle) (logAction <& formattedLine)
   where
-    logAction =
-      case level of
-        Error ->
-          logStringStderr
-        _ ->
-          logStringStdout
+    logAction = case level of
+      Error -> logStringStderr
+      _ -> logStringStdout
 
 -- |
 -- Creates new handle
@@ -95,11 +86,6 @@ close = const $ pure ()
 -- Create Logger config
 parseConfig :: Config
 parseConfig = Config Info
-
-newtype Unquoted = Unquoted String
-
-instance Show Unquoted where
-  show (Unquoted str) = str
 
 -- |
 -- Formats in following format:

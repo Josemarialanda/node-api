@@ -1,16 +1,16 @@
-module Impl.Authentication.Authenticator (Error (..), authenticator) where
+module Impl.Authentication (module Impl.Types.Authentication, authenticator) where
 
 import Control.Monad.Trans.Except (ExceptT, throwE, withExceptT)
-import Impl.Repository.User.Error (UserRepositoryError)
-import Infrastructure.Authentication.PasswordManager
+import Impl.Types.Authentication (Error (..))
+import Impl.User.Postgres (UserRepositoryError)
+import Infrastructure.Types.Authentication.PasswordManager
   ( PasswordManager (validatePassword)
   )
-import Infrastructure.Persistence.Queries (WrongNumberOfResults)
 import MatchOrNot.Authentication.Authenticator (Authenticator (..))
 import MatchOrNot.Authentication.Credentials (Credentials (..))
-import MatchOrNot.Id (Id)
-import MatchOrNot.Repository.User as UserRepo
-import MatchOrNot.User (User)
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.User (User, UserRepository)
+import MatchOrNot.Types.User qualified as UserRepo (findByName)
 
 authenticator
   :: UserRepository (ExceptT UserRepositoryError IO)
@@ -20,17 +20,6 @@ authenticator repo pm =
   Authenticator
     { authUser = authenticateUser repo pm
     }
-
--- |
--- How 'authenticateUser' can actually fail
-data Error
-  = -- | the provided 'Credentials' data do not correspond to a unique user
-    SelectUserError WrongNumberOfResults
-  | -- | the interaction with the database somehow failed
-    QueryError UserRepositoryError
-  | -- | the password provided in the 'Credentials' data is not correct
-    PasswordVerificationFailed
-  deriving (Show)
 
 -- |
 -- Concrete implementation of 'AuthenticateUser'.

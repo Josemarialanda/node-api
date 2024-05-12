@@ -1,72 +1,22 @@
-module API.MatchOrNot where
+module API.MatchOrNot (matchOrNotServer) where
 
+import API.Types.MatchOrNot (MatchOrNotAPI (..))
 import Control.Monad.Except (throwError)
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
-import GHC.Generics (Generic)
-import Infrastructure.Authentication.PasswordManager
+import Infrastructure.Types.Authentication.PasswordManager
   ( PasswordManager (generatePassword)
   )
-import MatchOrNot.Authentication.Credentials
-  ( Credentials (Credentials)
-  , Password (Password)
-  )
-import MatchOrNot.Content (Content)
-import MatchOrNot.Id (Id)
-import MatchOrNot.Owned (Owned)
-import MatchOrNot.Repository.Content
+import MatchOrNot.Authentication.Credentials (Credentials (..), Password (..))
+import MatchOrNot.Content
   ( ContentRepository (addContentWithTags, selectUserContentsByTags)
   )
-import MatchOrNot.Repository.User (UserRepository (..))
-import MatchOrNot.Tag (Tag)
-import MatchOrNot.User (User (..))
-import Servant (Handler, NoContent, Required, err400)
-import Servant.API
-  ( Delete
-  , Get
-  , JSON
-  , Post
-  , QueryParam'
-  , QueryParams
-  , ReqBody
-  , type (:>)
-  )
-import Servant.API.Generic ((:-))
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.User (User (..), UserRepository (..))
+import Servant (Handler, NoContent, err400)
 import Servant.Server (ServerError (..))
 import Servant.Server.Generic (AsServer)
 import Prelude hiding (getContents)
-
--- |
--- The main endpoints of the application API
-data MatchOrNotAPI mode = MatchOrNotAPI
-  { addContent
-      :: mode
-        :- "add-content"
-          :> ReqBody '[JSON] (Content Tag)
-          :> Post '[JSON] (Id (Content Tag))
-  -- ^ Add a new 'Content'
-  , getContents
-      :: mode
-        :- "get-contents" :> QueryParams "tag" Tag :> Get '[JSON] [Owned (Content Tag)]
-  -- ^ Retrieve all the 'User' 'Content's indexed by the provided 'Tag's
-  , deleteUser :: mode :- "user" :> "delete" :> Delete '[JSON] NoContent
-  -- ^ Change the 'Credentials' of the 'User' with the provided 'Id'
-  , changePassword
-      :: mode
-        :- "user"
-          :> "change-password"
-          :> QueryParam' '[Required] "password" Text
-          :> Post '[JSON] NoContent
-  -- ^ Change the password of the 'User' with the provided 'Id'
-  , changeUsername
-      :: mode
-        :- "user"
-          :> "change-username"
-          :> QueryParam' '[Required] "username" Text
-          :> Post '[JSON] NoContent
-  -- ^ Change the username of the 'User' with the provided 'Id'
-  }
-  deriving stock (Generic)
 
 matchOrNotServer
   :: Id User
@@ -81,6 +31,7 @@ matchOrNotServer userId passwordManager userRepository contentRepository =
     , deleteUser = deleteUserById userRepository userId
     , changePassword = changePasswordEndpoint userRepository passwordManager userId
     , changeUsername = changeUsernameById userRepository userId
+    , getProfile = getProfileById userRepository userId
     }
 
 changePasswordEndpoint
@@ -89,11 +40,10 @@ changePasswordEndpoint
   -> Id User
   -> Text
   -> Handler NoContent
-changePasswordEndpoint userRepository passwordManager userId password' = do
-  (_, User{name}) <- findById userRepository userId
-  if password' == ""
-    then throwError err400{errBody = "Password cannot be empty"}
-    else do
+changePasswordEndpoint userRepository passwordManager userId password'
+  | password' == "" = throwError err400{errBody = "Password cannot be empty"}
+  | otherwise = do
+      (_, User{name}) <- findById userRepository userId
       let newCredentials = Credentials name (Password $ encodeUtf8 password')
       hashedPassword <- generatePassword passwordManager newCredentials
       changePasswordById userRepository userId hashedPassword

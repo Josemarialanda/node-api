@@ -1,28 +1,65 @@
-module App where
+module App (run) where
 
-import API.AppServices as AppServices
+import API.AppServices as AppServices (start)
 import API.Application (app)
-import API.Config (Port (..), apiPort)
 import API.Config qualified as Config
+import API.Types.Config (Port (..), apiPort)
+import API.Types.Config qualified as Config
 import CLIOptions (CLIOptions (configPath))
 import CLIOptions qualified
-import Dependencies (Deps (..))
-import Dependencies qualified as Deps
-import Infrastructure.Logging.Logger qualified as Logger
+import Infrastructure.Database qualified as DB
+import Infrastructure.Logger qualified as Logger
+import Infrastructure.SystemTime qualified as SystemTime
 import MatchOrNot.JSONWebKey qualified as JWK
-import Middleware qualified
+import Network.Wai (Application, Middleware)
 import Network.Wai.Handler.Warp qualified as Warp
+import Network.Wai.Middleware.Cors
+  ( cors
+  , corsRequestHeaders
+  , simpleCorsResourcePolicy
+  )
+import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 
+-- |
+-- Main entry point of the application.
 run :: IO ()
 run = do
   options <- CLIOptions.parse
   appConfig <- Config.load $ configPath options
   key <- JWK.setup options
 
-  Deps.withDeps appConfig $ \Deps{dbHandle, loggerHandle} -> do
+  withDeps appConfig $ \Deps{dbHandle, loggerHandle} -> do
     let (Port port) = appConfig.api.apiPort
         services = AppServices.start dbHandle loggerHandle key
-        application = Middleware.apply (app services)
+        application = applyMiddleware (app services)
 
     Logger.logInfo loggerHandle $ "Starting app on port " <> show port <> "."
     Warp.run port application
+
+-- Middleware
+
+-- |
+-- Apply CORS and a request logger middleware to the application.
+applyMiddleware :: Application -> Application
+applyMiddleware = corsMiddleware . logStdoutDev
+
+corsMiddleware :: Middleware
+corsMiddleware = cors (const . Just $ simpleCorsResourcePolicy{corsRequestHeaders = headers})
+  where
+    headers = ["Authorization", "Content-Type"]
+
+-- Application dependencies
+
+-- |
+-- Aggregates all effects needed by the app
+data Deps = Deps
+  { systemTimeHandler :: SystemTime.Handle
+  , loggerHandle :: Logger.Handle
+  , dbHandle :: DB.Handle
+  }
+
+-- |
+-- Starts dependencies and calls a given effectful function with them
+withDeps :: Config.Config -> (Deps -> IO a) -> IO a
+withDeps appConfig f = SystemTime.withHandle $ \systemTimeHandler ->
+  Logger.withHandle systemTimeHandler $ \loggerHandle -> DB.withHandle appConfig $ \dbHandle -> f Deps{..}

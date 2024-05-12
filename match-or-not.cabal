@@ -21,39 +21,49 @@ library
       API.Authentication
       API.Config
       API.Docs
-      API.Healthcheck
+      API.HealthCheck
       API.MatchOrNot
+      API.Types.Application
+      API.Types.AppServices
+      API.Types.Authentication
+      API.Types.Config
+      API.Types.Docs
+      API.Types.HealthCheck
+      API.Types.MatchOrNot
       App
       CLIOptions
-      Dependencies
-      Impl.Authentication.Authenticator
-      Impl.Repository.Content
-      Impl.Repository.Content.InMemory
-      Impl.Repository.Content.Postgres
-      Impl.Repository.User
-      Impl.Repository.User.Error
-      Impl.Repository.User.InMemory
-      Impl.Repository.User.Postgres
+      Impl.Authentication
+      Impl.Content.Postgres
+      Impl.Types.Authentication
+      Impl.Types.User.Error
+      Impl.User.Postgres
       Infrastructure.Authentication.PasswordManager
-      Infrastructure.Authentication.Token
       Infrastructure.Database
-      Infrastructure.Logging.Logger
+      Infrastructure.Logger
       Infrastructure.Persistence.Queries
       Infrastructure.Persistence.Schema
       Infrastructure.Persistence.Serializer
       Infrastructure.SystemTime
+      Infrastructure.Types.Authentication.PasswordManager
+      Infrastructure.Types.Authentication.Token
+      Infrastructure.Types.Database
+      Infrastructure.Types.Logger
+      Infrastructure.Types.Persistence.Queries
+      Infrastructure.Types.Persistence.Schema
+      Infrastructure.Types.SystemTime
       MatchOrNot.Authentication.Authenticator
       MatchOrNot.Authentication.Credentials
       MatchOrNot.Content
       MatchOrNot.EncryptedPassword
-      MatchOrNot.Id
       MatchOrNot.JSONWebKey
-      MatchOrNot.Owned
-      MatchOrNot.Repository.Content
-      MatchOrNot.Repository.User
-      MatchOrNot.Tag
+      MatchOrNot.Types.Content
+      MatchOrNot.Types.EncryptedPassword
+      MatchOrNot.Types.Id
+      MatchOrNot.Types.Owned
+      MatchOrNot.Types.Profile
+      MatchOrNot.Types.Tag
+      MatchOrNot.Types.User
       MatchOrNot.User
-      Middleware
   other-modules:
       Paths_match_or_not
   hs-source-dirs:
@@ -163,8 +173,10 @@ test-suite match-or-not-spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      ContentRepo
       MatchOrNotSpec
       TestServices
+      UserRepo
       Paths_match_or_not
   hs-source-dirs:
       spec

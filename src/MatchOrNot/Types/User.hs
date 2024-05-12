@@ -1,9 +1,13 @@
-module MatchOrNot.Repository.User (UserRepository (..), hoist) where
+module MatchOrNot.Types.User (UserRepository (..), User (..)) where
 
+import Data.Aeson (ToJSON (toJSON), object, (.=))
+import Data.Aeson.Types (Value)
+import Data.OpenApi (ToSchema)
 import Data.Text (Text)
+import GHC.Generics (Generic)
 import MatchOrNot.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Id (Id)
-import MatchOrNot.User (User)
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.Profile (Profile)
 import Servant (NoContent)
 
 -- |
@@ -22,16 +26,22 @@ data UserRepository m = UserRepository
   -- ^ Changes the password of a user with the provided 'Id'
   , changeUsernameById :: Id User -> Text -> m NoContent
   -- ^ Changes the username of a user with the provided 'Id'
+  , getProfileById :: Id User -> m Profile
+  -- ^ Retrieves the profile of a user with the provided 'Id'
   }
 
 -- |
--- Given a natural transformation between a context 'm' and a context 'n', it allows to change the context where 'UserRepository' is operating
-hoist :: (forall a. m a -> n a) -> UserRepository m -> UserRepository n
-hoist f UserRepository{..} =
-  UserRepository
-    (f . findByName)
-    (f . findById)
-    ((f .) . add)
-    (f . deleteUserById)
-    ((f .) . changePasswordById)
-    ((f .) . changeUsernameById)
+-- A 'User' contains a 'Text' and an 'EncryptedPassword'
+data User = User
+  { name :: Text
+  , password :: EncryptedPassword
+  }
+  deriving stock (Eq, Show, Read, Generic)
+
+-- |
+-- We need to be careful to hide the password (even if it is encrypted) when we expose an 'User'
+instance ToJSON User where
+  toJSON :: User -> Value
+  toJSON User{name} = object ["name" .= name]
+
+instance ToSchema User

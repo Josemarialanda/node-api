@@ -1,28 +1,35 @@
-module Infrastructure.Persistence.Serializer where
+module Infrastructure.Persistence.Serializer (serializeContent, unserializeContent, serializeUser, unserializeUser, serializeProfile, unserializeProfile) where
 
-import Infrastructure.Persistence.Schema
+import Data.Text (pack, unpack)
+import Infrastructure.Types.Persistence.Schema
   ( contentContent
   , contentId
   , contentUserId
+  , profileAge
+  , profileFirstName
+  , profileLastName
+  , profileSex
   , tagId
   , tagName
   , userId
   , userName
   , userPassword
   )
-import Infrastructure.Persistence.Schema qualified as DB
+import Infrastructure.Types.Persistence.Schema qualified as DB
   ( Content (Content)
+  , Profile (..)
   , Tag (Tag)
   , User (User)
   )
 import MatchOrNot.Content (Content (..), createContent)
-import MatchOrNot.Id (Id)
-import MatchOrNot.Owned (Owned (Owned))
-import MatchOrNot.Owned qualified as Owned (content, userId)
-import MatchOrNot.Tag (Tag (Tag))
-import MatchOrNot.Tag qualified as Tag (name)
-import MatchOrNot.User (User (User))
-import MatchOrNot.User qualified as User (name, password)
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.Owned (Owned (Owned))
+import MatchOrNot.Types.Owned qualified as Owned (userId, value)
+import MatchOrNot.Types.Profile (Profile (..))
+import MatchOrNot.Types.Tag (Tag (Tag))
+import MatchOrNot.Types.Tag qualified as Tag (name)
+import MatchOrNot.Types.User (User (User))
+import MatchOrNot.Types.User qualified as User (name, password)
 import Rel8 (Result)
 
 -- CONTENT
@@ -50,10 +57,7 @@ unserializeContent
   :: DB.Content Result -> [DB.Tag Result] -> DB.User Result -> Owned (Content Tag)
 unserializeContent content tags' user =
   Owned
-    { Owned.content =
-        createContent
-          (contentContent content)
-          (unserializeTag <$> tags')
+    { Owned.value = createContent (contentContent content) (unserializeTag <$> tags')
     , Owned.userId = userId user
     }
 
@@ -89,3 +93,33 @@ serializeUser uuid user =
 -- Transform from the database representation of a 'User' to its domain representation
 unserializeUser :: DB.User Result -> User
 unserializeUser user = User (userName user) (userPassword user)
+
+-- PROFILE
+
+-- |
+-- Transform from a domain representation of a 'Profile' to its underlying database representation
+serializeProfile
+  :: Id Profile
+  -> Id User
+  -> Profile
+  -> DB.Profile Result
+serializeProfile profileId' userId' Profile{..} =
+  DB.Profile
+    { profileId = profileId'
+    , profileFirstName = firstName
+    , profileLastName = lastName
+    , profileAge = age
+    , profileSex = pack $ show sex
+    , profileUserId = userId'
+    }
+
+-- |
+-- Transform from the database representation of a 'Profile' to its domain representation
+unserializeProfile :: DB.Profile Result -> Profile
+unserializeProfile profile =
+  Profile
+    { firstName = profileFirstName profile
+    , lastName = profileLastName profile
+    , age = profileAge profile
+    , sex = read $ unpack $ profileSex profile
+    }

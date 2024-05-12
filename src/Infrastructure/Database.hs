@@ -1,21 +1,18 @@
 module Infrastructure.Database
-  ( Config (..)
-  , Handle
+  ( module Infrastructure.Types.Database
   , withHandle
   , runQuery
   )
 where
 
 import API.Config qualified as AppConfig
+import API.Types.Config qualified as AppConfig
 import Control.Exception (bracket)
-import Data.ByteString.Char8 (ByteString, unpack)
+import Data.ByteString.Char8 (unpack)
 import Data.Maybe (fromMaybe)
-import Hasql.Connection (Connection, acquire, release)
+import Hasql.Connection (acquire, release)
 import Hasql.Session (QueryError, Session, run)
-
-newtype Config = Config {connectionString :: ByteString}
-
-newtype Handle = Handle {dbConnection :: Connection}
+import Infrastructure.Types.Database (Config (..), Handle (..))
 
 new :: Config -> IO Handle
 new config = do
@@ -26,8 +23,7 @@ new config = do
     eConn
 
 parseConfig :: AppConfig.Config -> Config
-parseConfig =
-  Config . (AppConfig.connectionString . AppConfig.database)
+parseConfig = Config . (AppConfig.connectionString . AppConfig.database)
 
 close :: Handle -> IO ()
 close = release . dbConnection
@@ -40,5 +36,4 @@ withHandle config f = do
     f
 
 runQuery :: Handle -> Session a -> IO (Either QueryError a)
-runQuery handle query =
-  run query (dbConnection handle)
+runQuery handle query = run query (dbConnection handle)

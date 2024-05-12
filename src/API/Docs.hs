@@ -1,16 +1,13 @@
-module API.Docs where
+module API.Docs (docsServer) where
 
-import API.Authentication (AuthenticationAPI)
-import API.MatchOrNot (MatchOrNotAPI)
+import API.Types.Authentication (AuthenticationAPI)
+import API.Types.Docs (DocsAPI)
+import API.Types.MatchOrNot (MatchOrNotAPI)
 import Control.Lens ((&), (.~), (?~))
-import Data.OpenApi (OpenApi, description, info, title, version)
+import Data.OpenApi (description, info, title, version)
 import Data.Proxy (Proxy (Proxy))
-import Servant (Get, JSON, NamedRoutes, Server, (:>))
+import Servant (NamedRoutes, Server)
 import Servant.OpenApi (toOpenApi)
-
--- |
--- A single endpoint to expose the OpenAPI documentation of the application
-type DocsAPI = "docs" :> Get '[JSON] OpenApi
 
 docsServer :: Server DocsAPI
 docsServer =

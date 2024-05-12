@@ -1,24 +1,19 @@
-module Infrastructure.Persistence.Schema where
+module Infrastructure.Persistence.Schema
+  ( module Infrastructure.Types.Persistence.Schema
+  , litUser
+  , contentSchema
+  , contentsTagsSchema
+  , litContent
+  , litTag
+  , profileSchema
+  , tagSchema
+  , userSchema
+  ) where
 
-import Data.Text (Text)
-import GHC.Generics (Generic)
-import MatchOrNot.Content qualified as Domain (Content)
-import MatchOrNot.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Id (Id)
-import MatchOrNot.Tag qualified as Domain (Tag)
-import MatchOrNot.User qualified as Domain (User)
-import Rel8 (Column, Expr, Name, Rel8able, Result, TableSchema (..), lit)
+import Infrastructure.Types.Persistence.Schema (Content (..), ContentsTags (..), Profile (..), Tag (..), User (..))
+import Rel8 (Expr, Name, Result, TableSchema (..), lit)
 
 -- TAG
-
--- |
--- The database representation of a 'Tag'
-data Tag f = Tag
-  { tagId :: Column f (Id Domain.Tag)
-  , tagName :: Column f Text
-  }
-  deriving stock (Generic)
-  deriving anyclass (Rel8able)
 
 -- |
 -- A description of the schema of the 'Tag' table
@@ -40,16 +35,6 @@ litTag :: Tag Result -> Tag Expr
 litTag (Tag id' name') = Tag (lit id') (lit name')
 
 -- CONTENT
-
--- |
--- The database representation of a 'Content'
-data Content f = Content
-  { contentId :: Column f (Id (Domain.Content Domain.Tag))
-  , contentContent :: Column f Text
-  , contentUserId :: Column f (Id Domain.User)
-  }
-  deriving stock (Generic)
-  deriving anyclass (Rel8able)
 
 -- |
 -- A description of the schema of the 'Content' table
@@ -74,15 +59,6 @@ litContent (Content id' content' userId') = Content (lit id') (lit content') (li
 -- CONTENTS_TAGS
 
 -- |
--- The database representation of a connection between a 'Content' and a 'Tag'
-data ContentsTags f = ContentsTags
-  { ctContentId :: Column f (Id (Domain.Content Domain.Tag))
-  , ctTagId :: Column f (Id Domain.Tag)
-  }
-  deriving stock (Generic)
-  deriving anyclass (Rel8able)
-
--- |
 -- A description of the schema of the 'ContentsTags' table
 contentsTagsSchema :: TableSchema (ContentsTags Name)
 contentsTagsSchema =
@@ -99,16 +75,6 @@ contentsTagsSchema =
 -- USERS
 
 -- |
--- The database representation of a 'User'
-data User f = User
-  { userId :: Column f (Id Domain.User)
-  , userName :: Column f Text
-  , userPassword :: Column f EncryptedPassword
-  }
-  deriving stock (Generic)
-  deriving anyclass (Rel8able)
-
--- |
 -- A description of the schema of the 'User' table
 userSchema :: TableSchema (User Name)
 userSchema =
@@ -118,7 +84,7 @@ userSchema =
     , columns =
         User
           { userId = "id"
-          , userName = "name"
+          , userName = "username"
           , userPassword = "password"
           }
     }
@@ -127,3 +93,21 @@ userSchema =
 -- Allows to lift a 'User' with no context into the 'Expr' context
 litUser :: User Result -> User Expr
 litUser (User id' name' password) = User (lit id') (lit name') (lit password)
+
+-- PROFILE
+
+profileSchema :: TableSchema (Profile Name)
+profileSchema =
+  TableSchema
+    { name = "user_profiles"
+    , schema = Nothing
+    , columns =
+        Profile
+          { profileId = "id"
+          , profileFirstName = "first_name"
+          , profileLastName = "last_name"
+          , profileAge = "age"
+          , profileSex = "sex"
+          , profileUserId = "user_id"
+          }
+    }

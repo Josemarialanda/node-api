@@ -1,6 +1,6 @@
 CREATE TABLE users
 ( id UUID PRIMARY KEY
-, name TEXT NOT NULL UNIQUE
+, username TEXT NOT NULL UNIQUE
 , password TEXT NOT NULL
 );
 
@@ -12,10 +12,19 @@ CREATE TABLE contents
 
 CREATE TABLE tags
 ( id UUID PRIMARY KEY
-, name TEXT NOT NULL UNIQUE
+, username TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE contents_tags
 ( content_id UUID REFERENCES contents (id) ON DELETE CASCADE ON UPDATE CASCADE
 , tag_id     UUID REFERENCES tags     (id) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+CREATE TABLE user_profiles
+( id UUID PRIMARY KEY
+, first_name TEXT NOT NULL
+, last_name TEXT NOT NULL
+, age INT NOT NULL CHECK (age >= 0)
+, sex TEXT NOT NULL
+, user_id UUID REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

@@ -1,30 +1,19 @@
-module API.Config where
+module API.Config (load, connectionString) where
 
+import API.Types.Config
+  ( ApiConfig (..)
+  , Config (..)
+  , DBName (..)
+  , DatabaseConfig (..)
+  , Host (..)
+  , Password (..)
+  , Port (..)
+  , User (..)
+  )
 import Control.Monad.IO.Class (MonadIO)
 import Data.ByteString.Char8 (ByteString, pack)
-import Data.Text (Text, unpack)
+import Data.Text (unpack)
 import Toml (TomlCodec, decodeFileExact, diwrap, int, table, text, (.=))
-
--- |
--- The whole config needed by the application
-data Config = Config
-  { database :: DatabaseConfig
-  , api :: ApiConfig
-  }
-
--- |
--- The configuration parameters needed to expose the API
-newtype ApiConfig = ApiConfig {apiPort :: Port}
-
--- |
--- The configuration parameters needed to connect to a database
-data DatabaseConfig = DatabaseConfig
-  { host :: Host
-  , port :: Port
-  , dbname :: DBName
-  , user :: User
-  , password :: Password
-  }
 
 -- |
 -- Reads configuration file at given filepath
@@ -35,17 +24,6 @@ load path = do
     (\errors -> fail $ "unable to parse configuration: " <> show errors)
     pure
     eitherConfig
-
-newtype Host = Host {getHost :: Text}
-
-newtype Port = Port {getPort :: Int}
-  deriving newtype (Show)
-
-newtype DBName = DBName {getDBName :: Text}
-
-newtype User = User {getUser :: Text}
-
-newtype Password = Password {getPassword :: Text}
 
 -- |
 -- Compute the connection string given a 'DatabaseConfig'

@@ -1,5 +1,5 @@
 module Infrastructure.SystemTime
-  ( Handle
+  ( module Infrastructure.Types.SystemTime
   , withHandle
   , currentTime
   , UTCTime
@@ -9,8 +9,7 @@ where
 import Control.Exception (bracket)
 import Control.Monad.IO.Class (MonadIO (liftIO))
 import Data.Time.Clock (UTCTime, getCurrentTime)
-
-data Handle = Handle
+import Infrastructure.Types.SystemTime (Handle (Handle))
 
 -- |
 -- Yields a handle

@@ -1,30 +1,18 @@
-module API.Authentication where
+module API.Authentication (authenticationServer) where
 
-import GHC.Generics (Generic)
-import Infrastructure.Authentication.PasswordManager
+import API.Types.Authentication (AuthenticationAPI (..))
+import Infrastructure.Types.Authentication.PasswordManager
   ( PasswordManager (generatePassword, generateToken)
   )
-import Infrastructure.Authentication.Token (Token)
+import Infrastructure.Types.Authentication.Token (Token)
 import MatchOrNot.Authentication.Authenticator (Authenticator)
 import MatchOrNot.Authentication.Authenticator qualified as Authenticator
 import MatchOrNot.Authentication.Credentials (Credentials (username))
-import MatchOrNot.Id (Id)
-import MatchOrNot.Repository.User as UserRepository
-import MatchOrNot.User (User)
-import Servant (Handler, JSON, Post, ReqBody, type (:>))
-import Servant.API.Generic (type (:-))
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.User (User, UserRepository)
+import MatchOrNot.Types.User qualified as UserRepository
+import Servant (Handler)
 import Servant.Server.Generic (AsServer)
-
--- |
--- The endpoints required to perform authentication
-data AuthenticationAPI mode = AuthenticationAPI
-  { register
-      :: mode :- "register" :> ReqBody '[JSON] Credentials :> Post '[JSON] (Id User)
-  -- ^ Given some 'Login' data, registers a new 'User'
-  , login :: mode :- "login" :> ReqBody '[JSON] Credentials :> Post '[JSON] Token
-  -- ^ Given some 'Login' data, generates an authentication token
-  }
-  deriving stock (Generic)
 
 authenticationServer
   :: PasswordManager Handler

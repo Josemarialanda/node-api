@@ -1,4 +1,4 @@
-module Impl.Repository.Content.InMemory (Table, repository) where
+module ContentRepo (Table, repository) where
 
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Except (ExceptT)
@@ -7,10 +7,10 @@ import Data.UUID.V4 (nextRandom)
 import GHC.Conc (TVar, atomically, readTVar, writeTVar)
 import Hasql.Session (QueryError)
 import MatchOrNot.Content (Content, hasAllTags)
-import MatchOrNot.Id (Id (Id))
-import MatchOrNot.Owned (Owned (..))
 import MatchOrNot.Repository.Content (ContentRepository (..))
-import MatchOrNot.Tag (Tag)
+import MatchOrNot.Types.Id (Id (Id))
+import MatchOrNot.Types.Owned (Owned (..))
+import MatchOrNot.Types.Tag (Tag)
 import MatchOrNot.User (User)
 import Prelude hiding (filter)
 
@@ -32,7 +32,7 @@ inMemorySelectUserContentsByTags contentsMap userId' tags = liftIO . atomically 
   contents <- readTVar contentsMap
   let userContentsWithTags =
         filter
-          ((&&) <$> ((== userId') . userId) <*> (hasAllTags tags . content))
+          ((&&) <$> ((== userId') . userId) <*> (hasAllTags tags . value))
           contents
   pure $ elems userContentsWithTags
 

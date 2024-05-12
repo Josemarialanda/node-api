@@ -1,8 +1,10 @@
 # TODO.md
 
+add better error messages
+squash small modules
+clean up db querries
+
 ## API endpoints
-* Authentication
-   * change username
 
 * User profile
     * Full name

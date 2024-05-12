@@ -1,40 +1,25 @@
-module API.Application where
+module API.Application (app) where
 
-import API.AppServices (AppServices (..))
-import API.Authentication (AuthenticationAPI, authenticationServer)
-import API.Docs (DocsAPI, docsServer)
-import API.Healthcheck (HealthcheckAPI, healthcheckServer)
-import API.MatchOrNot (MatchOrNotAPI, matchOrNotServer)
+import API.Authentication (authenticationServer)
+import API.Docs (docsServer)
+import API.HealthCheck (healthCheckServer)
+import API.MatchOrNot (matchOrNotServer)
+import API.Types.AppServices (AppServices (..))
+import API.Types.Application (API, ApplicationAPI (..))
+import API.Types.MatchOrNot (MatchOrNotAPI)
 import Data.Proxy (Proxy (..))
-import GHC.Generics (Generic)
 import Infrastructure.Authentication.PasswordManager (PasswordManager)
-import MatchOrNot.Id (Id)
-import MatchOrNot.Repository.Content (ContentRepository)
-import MatchOrNot.Repository.User (UserRepository)
-import MatchOrNot.User (User)
+import MatchOrNot.Content (ContentRepository)
+import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.User (User, UserRepository)
 import Network.Wai (Application)
 import Servant (Context (EmptyContext, (:.)), Handler, err401, serveWithContext)
-import Servant.API (NamedRoutes, type (:>))
-import Servant.API.Generic ((:-))
-import Servant.Auth (Auth, JWT)
 import Servant.Auth.Server
   ( AuthResult (Authenticated)
   , ThrowAll (throwAll)
   , defaultCookieSettings
   )
 import Servant.Server.Generic (AsServer)
-
-type API = NamedRoutes ApplicationAPI
-
--- |
--- Collects all the API groups exposed by the application
-data ApplicationAPI mode = ApplicationAPI
-  { matchOrNot :: mode :- Auth '[JWT] (Id User) :> NamedRoutes MatchOrNotAPI
-  , docs :: mode :- DocsAPI
-  , healthcheck :: mode :- HealthcheckAPI
-  , authentication :: mode :- NamedRoutes AuthenticationAPI
-  }
-  deriving stock (Generic)
 
 -- |
 -- For the endpoints which actually require authentication, checks whether the request provides a valid authentication token.
@@ -60,12 +45,10 @@ server
     , authenticateUser
     } =
     ApplicationAPI
-      { matchOrNot =
-          authenticatedMatchOrNotServer passwordManager userRepository contentRepository
+      { matchOrNot = authenticatedMatchOrNotServer passwordManager userRepository contentRepository
       , docs = docsServer
-      , healthcheck = healthcheckServer
-      , authentication =
-          authenticationServer passwordManager authenticateUser userRepository
+      , healthCheck = healthCheckServer
+      , authentication = authenticationServer passwordManager authenticateUser userRepository
       }
 
 app :: AppServices -> Application
