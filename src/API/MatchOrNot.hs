@@ -1,6 +1,6 @@
-module API.MatchOrNot (matchOrNotServer) where
+module API.MatchOrNot (module API.Types.MatchOrNot, matchOrNotServer) where
 
-import API.Types.MatchOrNot (MatchOrNotAPI (..))
+import API.Types.MatchOrNot
 import Control.Monad.Except (throwError)
 import Data.Text (Text)
 import Data.Text.Encoding (encodeUtf8)
@@ -29,21 +29,23 @@ matchOrNotServer userId passwordManager userRepository contentRepository =
     { addContent = addContentWithTags contentRepository userId
     , getContents = selectUserContentsByTags contentRepository userId
     , deleteUser = deleteUserById userRepository userId
-    , changePassword = changePasswordEndpoint userRepository passwordManager userId
-    , changeUsername = changeUsernameById userRepository userId
+    , updatePassword = updatePasswordEndpoint userRepository passwordManager userId
+    , updateUsername = updateUsernameById userRepository userId
     , getProfile = getProfileById userRepository userId
+    , createProfile = createProfileById userRepository userId
+    , updateProfile = updateProfileById userRepository userId
     }
 
-changePasswordEndpoint
+updatePasswordEndpoint
   :: UserRepository Handler
   -> PasswordManager Handler
   -> Id User
   -> Text
   -> Handler NoContent
-changePasswordEndpoint userRepository passwordManager userId password'
+updatePasswordEndpoint userRepository passwordManager userId password'
   | password' == "" = throwError err400{errBody = "Password cannot be empty"}
   | otherwise = do
       (_, User{name}) <- findById userRepository userId
       let newCredentials = Credentials name (Password $ encodeUtf8 password')
       hashedPassword <- generatePassword passwordManager newCredentials
-      changePasswordById userRepository userId hashedPassword
+      updatePasswordById userRepository userId hashedPassword

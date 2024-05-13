@@ -22,12 +22,13 @@ import Hasql.Session
   , QueryError (QueryError)
   , ResultError (ServerError)
   )
-import Impl.User.Error (UserRepositoryError (..))
-import Infrastructure.Persistence.Queries (WrongNumberOfResults (..))
-import MatchOrNot.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Repository.User (UserRepository (..))
+import Impl.Types.User.Error (UserRepositoryError (..))
+import Infrastructure.Types.Persistence.Queries
+  ( WrongNumberOfResults (..)
+  )
+import MatchOrNot.Types.EncryptedPassword (EncryptedPassword)
 import MatchOrNot.Types.Id (Id (Id))
-import MatchOrNot.User (User (..))
+import MatchOrNot.Types.User (User (..), UserRepository (..))
 import PostgreSQL.ErrorCodes (unique_violation)
 import Servant (NoContent (NoContent))
 import Prelude hiding (filter)
@@ -41,9 +42,11 @@ repository userMap =
     , findById = inMemoryGetUserById userMap
     , add = inMemoryAddUser userMap
     , deleteUserById = inMemoryDeleteUser userMap
-    , changePasswordById = inMemorychangePasswordById userMap
-    , changeUsernameById = inMemorychangeUsernameById userMap
+    , updatePasswordById = inMemoryUpdatePasswordById userMap
+    , updateUsernameById = inMemoryUpdateUsernameById userMap
     , getProfileById = undefined
+    , updateProfileById = undefined
+    , createProfile = undefined
     }
 
 inMemoryGetUserByName
@@ -109,12 +112,12 @@ inMemoryDeleteUser userMap userId = do
     Just qe -> throwError qe
     Nothing -> pure NoContent
 
-inMemorychangePasswordById
+inMemoryUpdatePasswordById
   :: Table
   -> Id User
   -> EncryptedPassword
   -> ExceptT UserRepositoryError IO NoContent
-inMemorychangePasswordById userMap userId newPassword = do
+inMemoryUpdatePasswordById userMap userId newPassword = do
   queryError <- liftIO . atomically $ do
     users <- readTVar userMap
     let usersWithId = filterWithKey (\k _ -> k == userId) users
@@ -130,9 +133,9 @@ inMemorychangePasswordById userMap userId newPassword = do
     Just qe -> throwError qe
     Nothing -> pure NoContent
 
-inMemorychangeUsernameById
+inMemoryUpdateUsernameById
   :: Table -> Id User -> Text -> ExceptT UserRepositoryError IO NoContent
-inMemorychangeUsernameById userMap userId newName = do
+inMemoryUpdateUsernameById userMap userId newName = do
   queryError <- liftIO . atomically $ do
     users <- readTVar userMap
     let usersWithId = filterWithKey (\k _ -> k == userId) users

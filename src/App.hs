@@ -1,10 +1,8 @@
 module App (run) where
 
-import API.AppServices as AppServices (start)
+import API.AppServices (start)
 import API.Application (app)
 import API.Config qualified as Config
-import API.Types.Config (Port (..), apiPort)
-import API.Types.Config qualified as Config
 import CLIOptions (CLIOptions (configPath))
 import CLIOptions qualified
 import Infrastructure.Database qualified as DB
@@ -29,8 +27,8 @@ run = do
   key <- JWK.setup options
 
   withDeps appConfig $ \Deps{dbHandle, loggerHandle} -> do
-    let (Port port) = appConfig.api.apiPort
-        services = AppServices.start dbHandle loggerHandle key
+    let (Config.Port port) = appConfig.api.apiPort
+        services = start dbHandle loggerHandle key
         application = applyMiddleware (app services)
 
     Logger.logInfo loggerHandle $ "Starting app on port " <> show port <> "."

@@ -1,11 +1,11 @@
 module Infrastructure.Persistence.Serializer (serializeContent, unserializeContent, serializeUser, unserializeUser, serializeProfile, unserializeProfile) where
 
-import Data.Text (pack, unpack)
 import Infrastructure.Types.Persistence.Schema
   ( contentContent
   , contentId
   , contentUserId
   , profileAge
+  , profileEmail
   , profileFirstName
   , profileLastName
   , profileSex
@@ -21,7 +21,7 @@ import Infrastructure.Types.Persistence.Schema qualified as DB
   , Tag (Tag)
   , User (User)
   )
-import MatchOrNot.Content (Content (..), createContent)
+import MatchOrNot.Types.Content (Content (..), createContent)
 import MatchOrNot.Types.Id (Id)
 import MatchOrNot.Types.Owned (Owned (Owned))
 import MatchOrNot.Types.Owned qualified as Owned (userId, value)
@@ -99,18 +99,17 @@ unserializeUser user = User (userName user) (userPassword user)
 -- |
 -- Transform from a domain representation of a 'Profile' to its underlying database representation
 serializeProfile
-  :: Id Profile
-  -> Id User
+  :: Id User
   -> Profile
   -> DB.Profile Result
-serializeProfile profileId' userId' Profile{..} =
+serializeProfile userId' Profile{..} =
   DB.Profile
-    { profileId = profileId'
-    , profileFirstName = firstName
+    { profileFirstName = firstName
     , profileLastName = lastName
     , profileAge = age
-    , profileSex = pack $ show sex
+    , profileSex = sex
     , profileUserId = userId'
+    , profileEmail = email
     }
 
 -- |
@@ -121,5 +120,6 @@ unserializeProfile profile =
     { firstName = profileFirstName profile
     , lastName = profileLastName profile
     , age = profileAge profile
-    , sex = read $ unpack $ profileSex profile
+    , sex = profileSex profile
+    , email = profileEmail profile
     }

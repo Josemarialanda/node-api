@@ -2,13 +2,15 @@ module Infrastructure.Persistence.Queries
   ( module Infrastructure.Types.Persistence.Queries
   , addContentWithTags
   , addUser
-  , changePasswordById
-  , changeUsernameById
+  , updatePasswordById
+  , updateUsernameById
   , deleteUserById
   , getUserProfile
+  , updateUserProfile
   , selectUserById
   , selectUserByName
   , selectUserContents
+  , createUserProfile
   ) where
 
 import Data.List qualified as List (filter)
@@ -31,7 +33,12 @@ import Infrastructure.Persistence.Schema
   , contentsTagsSchema
   , litContent
   , litTag
+  , profileAge
+  , profileEmail
+  , profileFirstName
+  , profileLastName
   , profileSchema
+  , profileSex
   , profileUserId
   , tagSchema
   , userId
@@ -42,6 +49,7 @@ import Infrastructure.Types.Persistence.Queries
   )
 import MatchOrNot.EncryptedPassword (EncryptedPassword)
 import MatchOrNot.Types.Id (Id)
+import MatchOrNot.Types.Profile qualified as Profile
 import MatchOrNot.Types.User qualified as Domain (User)
 import Rel8
   ( Delete (..)
@@ -201,8 +209,7 @@ selectUserByName name = statement () query
 -- |
 -- Retrieve from the database a user with the provided 'Id'.
 -- If in the database we find none or more the one, it returns the appropriate error message
-selectUserById
-  :: Id Domain.User -> Session (Either WrongNumberOfResults (User Result))
+selectUserById :: Id Domain.User -> Session (Either WrongNumberOfResults (User Result))
 selectUserById userId' = statement () query
   where
     query = fmap justOne . select $ do
@@ -210,10 +217,10 @@ selectUserById userId' = statement () query
       filter (\user -> userId user ==. lit userId') users
 
 -- |
--- Change the password of the 'User' with the provided 'Id'
+-- Update the password of the 'User' with the provided 'Id'
 -- If the 'User' does not exist, it returns the appropriate error message
-changePasswordById :: Id Domain.User -> EncryptedPassword -> Session ()
-changePasswordById userId' newPassword = statement () query
+updatePasswordById :: Id Domain.User -> EncryptedPassword -> Session ()
+updatePasswordById userId' newPassword = statement () query
   where
     query =
       update $
@@ -226,10 +233,10 @@ changePasswordById userId' newPassword = statement () query
           }
 
 -- |
--- Change the username of the 'User' with the provided 'Id'
+-- Update the username of the 'User' with the provided 'Id'
 -- If the 'User' does not exist, it returns the appropriate error message
-changeUsernameById :: Id Domain.User -> Text -> Session ()
-changeUsernameById userId' newUsername = statement () query
+updateUsernameById :: Id Domain.User -> Text -> Session ()
+updateUsernameById userId' newUsername = statement () query
   where
     query =
       update $
@@ -275,3 +282,29 @@ getUserProfile userId' = statement () query
     query = fmap justOne . select $ do
       profiles <- each profileSchema
       filter (\profile -> profileUserId profile ==. lit userId') profiles
+
+-- |
+-- Update the 'Profile' of the 'User' with the provided 'Id'
+-- If the 'User' does not exist, do nothing
+updateUserProfile :: Id Domain.User -> Profile.Profile -> Session ()
+updateUserProfile userId' profile = statement () query
+  where
+    query =
+      update $
+        Update
+          { target = profileSchema
+          , from = pure ()
+          , updateWhere = \_ row -> profileUserId row ==. lit userId'
+          , set = \_ row ->
+              row
+                { profileFirstName = lit $ Profile.firstName profile
+                , profileLastName = lit $ Profile.lastName profile
+                , profileAge = lit $ Profile.age profile
+                , profileSex = lit $ Profile.sex profile
+                , profileEmail = lit $ Profile.email profile
+                }
+          , returning = pure ()
+          }
+
+createUserProfile :: Profile Expr -> Session ()
+createUserProfile = statement () . add profileSchema . pure

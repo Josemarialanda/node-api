@@ -1,15 +1,6 @@
-module API.Config (load, connectionString) where
+module API.Config (module API.Types.Config, load, connectionString) where
 
 import API.Types.Config
-  ( ApiConfig (..)
-  , Config (..)
-  , DBName (..)
-  , DatabaseConfig (..)
-  , Host (..)
-  , Password (..)
-  , Port (..)
-  , User (..)
-  )
 import Control.Monad.IO.Class (MonadIO)
 import Data.ByteString.Char8 (ByteString, pack)
 import Data.Text (unpack)

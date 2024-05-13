@@ -21,10 +21,10 @@ CREATE TABLE contents_tags
 );
 
 CREATE TABLE user_profiles
-( id UUID PRIMARY KEY
-, first_name TEXT NOT NULL
+( first_name TEXT NOT NULL
 , last_name TEXT NOT NULL
 , age INT NOT NULL CHECK (age >= 0)
 , sex TEXT NOT NULL
-, user_id UUID REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
+, email TEXT
+, user_id UUID UNIQUE REFERENCES users (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

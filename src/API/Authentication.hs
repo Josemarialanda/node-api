@@ -1,6 +1,6 @@
-module API.Authentication (authenticationServer) where
+module API.Authentication (module API.Types.Authentication, authenticationServer) where
 
-import API.Types.Authentication (AuthenticationAPI (..))
+import API.Types.Authentication
 import Infrastructure.Types.Authentication.PasswordManager
   ( PasswordManager (generatePassword, generateToken)
   )

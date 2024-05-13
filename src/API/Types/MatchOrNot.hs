@@ -30,13 +30,17 @@ data MatchOrNotAPI mode = MatchOrNotAPI
   -- ^ Retrieve all the 'User' 'Content's indexed by the provided 'Tag's
   , deleteUser :: mode :- "user" :> "delete" :> Delete '[JSON] NoContent
   -- ^ Delete the 'User' with the provided 'Id'
-  , changePassword
-      :: mode :- "user" :> "change-password" :> QueryParam' '[Required] "password" Text :> Post '[JSON] NoContent
-  -- ^ Change the password of the 'User' with the provided 'Id'
-  , changeUsername
-      :: mode :- "user" :> "change-username" :> QueryParam' '[Required] "username" Text :> Post '[JSON] NoContent
-  -- ^ Change the username of the 'User' with the provided 'Id'
+  , updatePassword
+      :: mode :- "user" :> "update-password" :> QueryParam' '[Required] "password" Text :> Post '[JSON] NoContent
+  -- ^ Update the password of the 'User' with the provided 'Id'
+  , updateUsername
+      :: mode :- "user" :> "update-username" :> QueryParam' '[Required] "username" Text :> Post '[JSON] NoContent
+  -- ^ Update the username of the 'User' with the provided 'Id'
   , getProfile :: mode :- "user" :> "profile" :> Get '[JSON] Profile
   -- ^ Retrieve the 'Profile' of the 'User' with the provided 'Id'
+  , createProfile :: mode :- "user" :> "create-profile" :> ReqBody '[JSON] Profile :> Post '[JSON] NoContent
+  -- ^ Create a new 'Profile' for the 'User' with the provided 'Id'
+  , updateProfile :: mode :- "user" :> "update-profile" :> ReqBody '[JSON] Profile :> Post '[JSON] NoContent
+  -- ^ Update the 'Profile' of the 'User' with the provided 'Id'
   }
   deriving stock (Generic)

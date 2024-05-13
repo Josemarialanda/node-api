@@ -1,6 +1,13 @@
-module API.AppServices (start) where
+module API.AppServices
+  ( module API.Types.AppServices
+  , connectedAuthenticateUser
+  , connectedContentRepository
+  , connectedUserRepository
+  , encryptedPasswordManager
+  , start
+  ) where
 
-import API.Types.AppServices (AppServices (..))
+import API.Types.AppServices
 import Control.Monad ((<=<))
 import Control.Monad.Except (throwError)
 import Control.Monad.IO.Class (liftIO)
@@ -12,10 +19,12 @@ import Impl.Content.Postgres qualified as ContentPostgres
 import Impl.User.Postgres qualified as UserPostgres
 import Infrastructure.Authentication.PasswordManager (PasswordManager, PasswordManagerError (..), bcryptPasswordManager)
 import Infrastructure.Authentication.PasswordManager qualified as PasswordManager
-import Infrastructure.Database qualified as DB
 import Infrastructure.Logger (logError, logWarning, withContext)
-import Infrastructure.Logger qualified as Logger
-import Infrastructure.Persistence.Queries (WrongNumberOfResults (..))
+import Infrastructure.Types.Database qualified as DB
+import Infrastructure.Types.Logger qualified as Logger
+import Infrastructure.Types.Persistence.Queries
+  ( WrongNumberOfResults (..)
+  )
 import MatchOrNot.Authentication.Authenticator qualified as Auth
 import MatchOrNot.Content (ContentRepository)
 import MatchOrNot.Content qualified as ContentRepository

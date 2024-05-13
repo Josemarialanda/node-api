@@ -5,7 +5,6 @@ import GHC.Generics (Generic)
 import MatchOrNot.Types.Content qualified as Domain (Content)
 import MatchOrNot.Types.EncryptedPassword (EncryptedPassword)
 import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.Profile qualified as Profile
 import MatchOrNot.Types.Tag qualified as Domain (Tag)
 import MatchOrNot.Types.User qualified as Domain (User)
 import Rel8 (Column, Rel8able)
@@ -61,12 +60,12 @@ data User f = User
 -- |
 -- The database representation of a 'Profile'
 data Profile f = Profile
-  { profileId :: Column f (Id Profile.Profile)
-  , profileFirstName :: Column f Text
+  { profileFirstName :: Column f Text
   , profileLastName :: Column f Text
   , profileAge :: Column f Double
   , profileSex :: Column f Text
   , profileUserId :: Column f (Id Domain.User)
+  , profileEmail :: Column f (Maybe Text)
   }
   deriving stock (Generic)
   deriving anyclass (Rel8able)

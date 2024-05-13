@@ -8,6 +8,7 @@ module Infrastructure.Persistence.Schema
   , profileSchema
   , tagSchema
   , userSchema
+  , litProfile
   ) where
 
 import Infrastructure.Types.Persistence.Schema (Content (..), ContentsTags (..), Profile (..), Tag (..), User (..))
@@ -103,11 +104,15 @@ profileSchema =
     , schema = Nothing
     , columns =
         Profile
-          { profileId = "id"
-          , profileFirstName = "first_name"
+          { profileFirstName = "first_name"
           , profileLastName = "last_name"
           , profileAge = "age"
           , profileSex = "sex"
           , profileUserId = "user_id"
+          , profileEmail = "email"
           }
     }
+
+litProfile :: Profile Result -> Profile Expr
+litProfile (Profile firstName lastName age sex userId' email) =
+  Profile (lit firstName) (lit lastName) (lit age) (lit sex) (lit userId') (lit email)

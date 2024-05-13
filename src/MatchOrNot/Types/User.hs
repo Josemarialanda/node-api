@@ -22,12 +22,16 @@ data UserRepository m = UserRepository
   -- ^ Adds a user with the provided name and password
   , deleteUserById :: Id User -> m NoContent
   -- ^ Deletes a user with the provided 'Id'
-  , changePasswordById :: Id User -> EncryptedPassword -> m NoContent
-  -- ^ Changes the password of a user with the provided 'Id'
-  , changeUsernameById :: Id User -> Text -> m NoContent
-  -- ^ Changes the username of a user with the provided 'Id'
+  , updatePasswordById :: Id User -> EncryptedPassword -> m NoContent
+  -- ^ Updates the password of a user with the provided 'Id'
+  , updateUsernameById :: Id User -> Text -> m NoContent
+  -- ^ Updates the username of a user with the provided 'Id'
   , getProfileById :: Id User -> m Profile
   -- ^ Retrieves the profile of a user with the provided 'Id'
+  , createProfileById :: Id User -> Profile -> m NoContent
+  -- ^ Creates a profile for a user with the provided 'Id'
+  , updateProfileById :: Id User -> Profile -> m NoContent
+  -- ^ Updates the profile of a user with the provided 'Id'
   }
 
 -- |

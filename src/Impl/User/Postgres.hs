@@ -14,8 +14,8 @@ import Hasql.Session
 import Impl.Types.User.Error (UserRepositoryError (..))
 import Infrastructure.Database qualified as DB
 import Infrastructure.Persistence.Queries qualified as Query
-import Infrastructure.Persistence.Schema (litUser, userId)
-import Infrastructure.Persistence.Serializer (serializeUser, unserializeProfile, unserializeUser)
+import Infrastructure.Persistence.Schema (litProfile, litUser, userId)
+import Infrastructure.Persistence.Serializer (serializeProfile, serializeUser, unserializeProfile, unserializeUser)
 import MatchOrNot.Types.EncryptedPassword (EncryptedPassword)
 import MatchOrNot.Types.Id (Id (Id))
 import MatchOrNot.Types.Profile (Profile)
@@ -31,9 +31,11 @@ repository handle =
     , findById = postgresGetUserById handle
     , add = postgresAddUser handle
     , deleteUserById = postgresDeleteUser handle
-    , changePasswordById = postgresChangePasswordById handle
-    , changeUsernameById = postgresChangeUsernameById handle
+    , updatePasswordById = postgresUpdatePasswordById handle
+    , updateUsernameById = postgresUpdateUsernameById handle
     , getProfileById = postgresGetProfileById handle
+    , createProfileById = postgresCreateProfileById handle
+    , updateProfileById = postgresUpdateProfileById handle
     }
 
 postgresGetUserByName :: DB.Handle -> Text -> ExceptT UserRepositoryError IO (Id User, User)
@@ -67,29 +69,31 @@ postgresDeleteUser :: DB.Handle -> Id User -> ExceptT UserRepositoryError IO NoC
 postgresDeleteUser handle userId = do
   eitherUser <- runRepositoryQuery handle (Query.selectUserById userId)
   case eitherUser of
-    Right _ -> runRepositoryQuery handle (Query.deleteUserById userId) >> pure NoContent
+    Right _ -> do
+      runRepositoryQuery handle (Query.deleteUserById userId)
+      pure NoContent
     Left e -> throwE $ UnexpectedNumberOfRows e
 
-postgresChangePasswordById
+postgresUpdatePasswordById
   :: DB.Handle
   -> Id User
   -> EncryptedPassword
   -> ExceptT UserRepositoryError IO NoContent
-postgresChangePasswordById handle userId password = do
+postgresUpdatePasswordById handle userId password = do
   eitherUser <- runRepositoryQuery handle (Query.selectUserById userId)
   case eitherUser of
     Right _ -> do
-      runRepositoryQuery handle (Query.changePasswordById userId password)
+      runRepositoryQuery handle (Query.updatePasswordById userId password)
       pure NoContent
     Left e -> throwE $ UnexpectedNumberOfRows e
 
-postgresChangeUsernameById
+postgresUpdateUsernameById
   :: DB.Handle -> Id User -> Text -> ExceptT UserRepositoryError IO NoContent
-postgresChangeUsernameById handle userId name = do
+postgresUpdateUsernameById handle userId name = do
   eitherUser <- runRepositoryQuery handle (Query.selectUserById userId)
   case eitherUser of
     Right _ -> do
-      runRepositoryQuery handle (Query.changeUsernameById userId name)
+      runRepositoryQuery handle (Query.updateUsernameById userId name)
       pure NoContent
     Left e -> throwE $ UnexpectedNumberOfRows e
 
@@ -98,6 +102,26 @@ postgresGetProfileById handle userId = do
   eitherProfile <- runRepositoryQuery handle (Query.getUserProfile userId)
   case eitherProfile of
     Right profile -> pure $ unserializeProfile profile
+    Left e -> throwE $ UnexpectedNumberOfRows e
+
+postgresUpdateProfileById :: DB.Handle -> Id User -> Profile -> ExceptT UserRepositoryError IO NoContent
+postgresUpdateProfileById handle userId profile = do
+  eitherUser <- runRepositoryQuery handle (Query.selectUserById userId)
+  case eitherUser of
+    Right _ -> do
+      let query = Query.updateUserProfile userId profile
+      runRepositoryQuery handle query
+      pure NoContent
+    Left e -> throwE $ UnexpectedNumberOfRows e
+
+postgresCreateProfileById :: DB.Handle -> Id User -> Profile -> ExceptT UserRepositoryError IO NoContent
+postgresCreateProfileById handle userId profile = do
+  eitherUser <- runRepositoryQuery handle (Query.selectUserById userId)
+  case eitherUser of
+    Right _ -> do
+      let query = Query.createUserProfile . litProfile $ serializeProfile userId profile
+      runRepositoryQuery handle query
+      pure NoContent
     Left e -> throwE $ UnexpectedNumberOfRows e
 
 -- | Run a query transforming a Hasql.QueryError into a UserRepositoryError as appropriate to the

@@ -7,10 +7,13 @@ import MatchOrNot.Types.User (UserRepository (..))
 hoist :: (forall a. m a -> n a) -> UserRepository m -> UserRepository n
 hoist f UserRepository{..} =
   UserRepository
-    (f . findByName)
-    (f . findById)
-    ((f .) . add)
-    (f . deleteUserById)
-    ((f .) . changePasswordById)
-    ((f .) . changeUsernameById)
-    (f . getProfileById)
+    { findByName = f . findByName
+    , findById = f . findById
+    , add = (f .) . add
+    , deleteUserById = f . deleteUserById
+    , updatePasswordById = (f .) . updatePasswordById
+    , updateUsernameById = (f .) . updateUsernameById
+    , getProfileById = f . getProfileById
+    , createProfileById = (f .) . createProfileById
+    , updateProfileById = (f .) . updateProfileById
+    }

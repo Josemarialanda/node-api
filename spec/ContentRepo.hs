@@ -6,12 +6,15 @@ import Data.Map.Lazy (Map, elems, filter, insert)
 import Data.UUID.V4 (nextRandom)
 import GHC.Conc (TVar, atomically, readTVar, writeTVar)
 import Hasql.Session (QueryError)
-import MatchOrNot.Content (Content, hasAllTags)
-import MatchOrNot.Repository.Content (ContentRepository (..))
+import MatchOrNot.Content
+  ( Content
+  , ContentRepository (..)
+  , hasAllTags
+  )
 import MatchOrNot.Types.Id (Id (Id))
 import MatchOrNot.Types.Owned (Owned (..))
 import MatchOrNot.Types.Tag (Tag)
-import MatchOrNot.User (User)
+import MatchOrNot.Types.User (User)
 import Prelude hiding (filter)
 
 type Table = TVar (Map (Id (Content Tag)) (Owned (Content Tag)))
