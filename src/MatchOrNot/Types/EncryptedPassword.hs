@@ -1,15 +1,19 @@
-module MatchOrNot.Types.EncryptedPassword (EncryptedPassword (..)) where
+module MatchOrNot.Types.EncryptedPassword
+  ( EncryptedPassword (..)
+  ) where
 
-import Data.Aeson (FromJSON (parseJSON), ToJSON (toJSON))
-import Data.Aeson.Types (Parser, Value)
-import Data.ByteString (ByteString)
-import Data.Data (Proxy (Proxy))
-import Data.OpenApi (Definitions, NamedSchema, Schema, ToSchema (declareNamedSchema))
+import Data.Aeson           (FromJSON (parseJSON), ToJSON (toJSON))
+import Data.Aeson.Types     (Parser, Value)
+import Data.ByteString      (ByteString)
+import Data.Data            (Proxy (Proxy))
+import Data.OpenApi         (Definitions, NamedSchema, Schema, ToSchema (declareNamedSchema))
 import Data.OpenApi.Declare (Declare)
-import Data.Text (Text)
-import Data.Text.Encoding (decodeUtf8, encodeUtf8)
-import GHC.Generics (Generic)
-import Rel8 (DBEq, DBType)
+import Data.Text            (Text)
+import Data.Text.Encoding   (decodeUtf8, encodeUtf8)
+
+import GHC.Generics         (Generic)
+
+import Rel8                 (DBEq, DBType)
 
 -- |
 -- An 'EncryptedPassword' is a newtype wrapping a 'Bytestring'.

@@ -1,47 +1,41 @@
 module MatchOrNotSpec where
 
-import API.Application (API, ApplicationAPI (..), app)
-import API.Authentication (AuthenticationAPI (..))
-import API.MatchOrNot (MatchOrNotAPI (..))
-import Data.ByteString.Lazy (toStrict)
-import Data.Either (isRight)
-import Data.Proxy (Proxy (Proxy))
-import Infrastructure.Types.Authentication.Token (Token (Token))
-import MatchOrNot.Authentication.Credentials
-  ( Credentials (Credentials)
-  , Password (Password)
-  )
-import MatchOrNot.Content (Content, createContent)
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.Owned (Owned (Owned))
-import MatchOrNot.Types.Tag (Tag (Tag))
-import MatchOrNot.Types.User (User)
-import Network.HTTP.Client (defaultManagerSettings, newManager)
-import Network.HTTP.Types.Status (Status, forbidden403, unauthorized401)
-import Network.Wai.Handler.Warp (Port, testWithApplication)
-import Servant.Auth.Client.Internal qualified as Servant (Token (Token))
-import Servant.Client
-  ( ClientEnv
-  , ClientM
-  , HasClient (Client)
-  , baseUrlPort
-  , client
-  , mkClientEnv
-  , parseBaseUrl
-  , runClientM
-  )
-import Servant.Client.Core (ClientError (..), responseStatusCode)
-import Test.Hspec
-  ( Spec
-  , around
-  , describe
-  , it
-  , runIO
-  , shouldMatchList
-  , shouldSatisfy
-  )
-import TestServices (testServices)
-import Prelude hiding (getContents)
+import           API.Application                           (app)
+import           API.Types.Application                     (API, ApplicationAPI (..))
+import           API.Types.Authentication                  (AuthenticationAPI (..))
+import           API.Types.MatchOrNot                      (MatchOrNotAPI (..))
+
+import           Data.ByteString.Lazy                      (toStrict)
+import           Data.Either                               (isRight)
+import           Data.Proxy                                (Proxy (Proxy))
+
+import           Infrastructure.Types.Authentication.Token (Token (Token))
+
+import           MatchOrNot.Authentication.Credentials     (Credentials (Credentials),
+                                                            Password (Password))
+import           MatchOrNot.Content                        (createContent)
+import           MatchOrNot.Types.Content                  (Content)
+import           MatchOrNot.Types.Id                       (Id)
+import           MatchOrNot.Types.Owned                    (Owned (Owned))
+import           MatchOrNot.Types.Tag                      (Tag (Tag))
+import           MatchOrNot.Types.User                     (User)
+
+import           Network.HTTP.Client                       (defaultManagerSettings, newManager)
+import           Network.HTTP.Types.Status                 (Status, forbidden403, unauthorized401)
+import           Network.Wai.Handler.Warp                  (Port, testWithApplication)
+
+import           Prelude                                   hiding (getContents)
+
+import qualified Servant.Auth.Client.Internal              as Servant (Token (Token))
+import           Servant.Client                            (ClientEnv, ClientM, HasClient (Client),
+                                                            baseUrlPort, client, mkClientEnv,
+                                                            parseBaseUrl, runClientM)
+import           Servant.Client.Core                       (ClientError (..), responseStatusCode)
+
+import           Test.Hspec                                (Spec, around, describe, it, runIO,
+                                                            shouldMatchList, shouldSatisfy)
+
+import           TestServices                              (testServices)
 
 withTaggerApp :: (Port -> IO ()) -> IO ()
 withTaggerApp = testWithApplication $ app <$> testServices
@@ -168,7 +162,7 @@ spec = around withTaggerApp $ do
         _ <- addUserContent (clientEnv port) token content2
         contents <- getUserContents (clientEnv port) token [Tag "second tag"]
         case contents of
-          Left _ -> fail "unable to retrieve contents"
+          Left _             -> fail "unable to retrieve contents"
           Right ownedContent -> ownedContent `shouldMatchList` [Owned userId content1]
 
       it "does not retrieve contents with non existing mix of tags" $ \port -> do
@@ -181,7 +175,7 @@ spec = around withTaggerApp $ do
         contents <-
           getUserContents (clientEnv port) token [Tag "second tag", Tag "third tag"]
         case contents of
-          Left _ -> fail "unable to retrieve contents"
+          Left _             -> fail "unable to retrieve contents"
           Right ownedContent -> ownedContent `shouldMatchList` []
 
       it "retrieves contents with all the required tags" $ \port -> do
@@ -194,7 +188,7 @@ spec = around withTaggerApp $ do
         contents <-
           getUserContents (clientEnv port) token [Tag "first tag", Tag "second tag"]
         case contents of
-          Left _ -> fail "unable to retrieve contents"
+          Left _             -> fail "unable to retrieve contents"
           Right ownedContent -> ownedContent `shouldMatchList` [Owned userId content1]
 
       it "retrieves only contents from the requesting user" $ \port -> do

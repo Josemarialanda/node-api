@@ -1,26 +1,25 @@
 module Infrastructure.Logger
-  ( module Infrastructure.Types.Logger
-  , withHandle
+  ( withHandle
   , withContext
   , logError
   , logInfo
   , logWarning
   , logDebug
-  )
-where
+  ) where
 
-import Colog.Core (Severity (..), logStringStderr, logStringStdout, (<&))
-import Control.Exception (bracket)
-import Control.Monad (when)
-import Control.Monad.IO.Class (MonadIO)
-import Infrastructure.SystemTime (UTCTime)
-import Infrastructure.SystemTime qualified as SystemTime
-import Infrastructure.Types.Logger
-  ( Config (..)
-  , Context
-  , Handle (..)
-  )
-import Prelude hiding (log)
+import           Colog.Core                      (Severity (..), logStringStderr, logStringStdout,
+                                                  (<&))
+
+import           Control.Exception               (bracket)
+import           Control.Monad                   (when)
+import           Control.Monad.IO.Class          (MonadIO)
+
+import           Infrastructure.SystemTime       (UTCTime)
+import qualified Infrastructure.SystemTime       as SystemTime
+import           Infrastructure.Types.Logger     (Config (..), Context, Handle (..))
+import qualified Infrastructure.Types.SystemTime as SystemTime
+
+import           Prelude                         hiding (log)
 
 -- |
 -- Uses dependencies to yield a handle
@@ -64,7 +63,7 @@ log level handle msg = do
   where
     logAction = case level of
       Error -> logStringStderr
-      _ -> logStringStdout
+      _     -> logStringStdout
 
 -- |
 -- Creates new handle

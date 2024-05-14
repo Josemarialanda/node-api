@@ -1,16 +1,23 @@
-module Infrastructure.Types.Logger (Config (..), Context, Handle (..)) where
+module Infrastructure.Types.Logger
+  ( Config (..)
+  , Context
+  , Handle (..)
+  ) where
 
-import Colog.Core (Severity (..))
-import Data.Text (Text)
-import Infrastructure.SystemTime qualified as SystemTime
-import Prelude hiding (log)
+import           Colog.Core                      (Severity (..))
+
+import           Data.Text                       (Text)
+
+import qualified Infrastructure.Types.SystemTime as SystemTime
+
+import           Prelude                         hiding (log)
 
 newtype Config = Config {logLevel :: Severity}
 
 data Handle = Handle
   { systemTimeHandle :: SystemTime.Handle
-  , localContext :: Maybe Context
-  , minLevel :: Severity
+  , localContext     :: Maybe Context
+  , minLevel         :: Severity
   }
 
 type Context = Text

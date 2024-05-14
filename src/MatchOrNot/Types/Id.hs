@@ -1,9 +1,13 @@
-module MatchOrNot.Types.Id (Id (..)) where
+module MatchOrNot.Types.Id
+  ( Id (..)
+  ) where
 
-import Data.Aeson (FromJSON, ToJSON)
-import Data.OpenApi (ToSchema)
-import Data.UUID (UUID)
-import Rel8 (DBEq, DBType)
+import Data.Aeson       (FromJSON, ToJSON)
+import Data.OpenApi     (ToSchema)
+import Data.UUID        (UUID)
+
+import Rel8             (DBEq, DBType)
+
 import Servant.Auth.JWT (FromJWT, ToJWT)
 
 -- |

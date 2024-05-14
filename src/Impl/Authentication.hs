@@ -1,16 +1,19 @@
-module Impl.Authentication (module Impl.Types.Authentication, authenticator) where
+module Impl.Authentication
+  ( authenticator
+  ) where
 
-import Control.Monad.Trans.Except (ExceptT, throwE, withExceptT)
-import Impl.Types.Authentication (Error (..))
-import Impl.User.Postgres (UserRepositoryError)
-import Infrastructure.Types.Authentication.PasswordManager
-  ( PasswordManager (validatePassword)
-  )
-import MatchOrNot.Authentication.Authenticator (Authenticator (..))
-import MatchOrNot.Authentication.Credentials (Credentials (..))
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.User (User, UserRepository)
-import MatchOrNot.Types.User qualified as UserRepo (findByName)
+import           Control.Monad.Trans.Except                          (ExceptT, throwE, withExceptT)
+
+import           Impl.Types.Authentication                           (Error (..))
+import           Impl.Types.User.Error                               (UserRepositoryError)
+
+import           Infrastructure.Types.Authentication.PasswordManager (PasswordManager (validatePassword))
+
+import           MatchOrNot.Authentication.Authenticator             (Authenticator (..))
+import           MatchOrNot.Authentication.Credentials               (Credentials (..))
+import           MatchOrNot.Types.Id                                 (Id)
+import           MatchOrNot.Types.User                               (User, UserRepository)
+import qualified MatchOrNot.Types.User                               as UserRepo (findByName)
 
 authenticator
   :: UserRepository (ExceptT UserRepositoryError IO)

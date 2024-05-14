@@ -1,9 +1,12 @@
-module MatchOrNot.Types.Tag (Tag (..)) where
+module MatchOrNot.Types.Tag
+  ( Tag (..)
+  ) where
 
-import Data.Aeson (FromJSON, ToJSON)
+import Data.Aeson   (FromJSON, ToJSON)
 import Data.OpenApi (ToParamSchema, ToSchema)
-import Data.Text (Text)
-import Servant (FromHttpApiData, ToHttpApiData)
+import Data.Text    (Text)
+
+import Servant      (FromHttpApiData, ToHttpApiData)
 
 -- |
 -- A 'Tag' is a newtype wrapper around some 'Text', used to index a 'MatchOrNot.Content.Content'

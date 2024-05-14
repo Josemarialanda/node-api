@@ -1,29 +1,28 @@
-module Impl.Content.Postgres (repository) where
+module Impl.Content.Postgres
+  ( repository
+  ) where
 
-import Control.Monad (forM)
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Trans.Except (ExceptT (ExceptT))
-import Data.Tuple.Extra (uncurry3)
-import Data.UUID.V4 (nextRandom)
-import Hasql.Session (QueryError)
-import Infrastructure.Database qualified as DB
-import Infrastructure.Persistence.Queries qualified as DB
-  ( addContentWithTags
-  , selectUserContents
-  )
-import Infrastructure.Persistence.Serializer
-  ( serializeContent
-  , unserializeContent
-  )
-import MatchOrNot.Content
-  ( Content
-  , ContentRepository (..)
-  , hasAllTags
-  )
-import MatchOrNot.Types.Id (Id (Id))
-import MatchOrNot.Types.Owned (Owned (value))
-import MatchOrNot.Types.Tag (Tag)
-import MatchOrNot.Types.User (User)
+import           Control.Monad                         (forM)
+import           Control.Monad.IO.Class                (liftIO)
+import           Control.Monad.Trans.Except            (ExceptT (ExceptT))
+
+import           Data.Tuple.Extra                      (uncurry3)
+import           Data.UUID.V4                          (nextRandom)
+
+import           Hasql.Session                         (QueryError)
+
+import qualified Infrastructure.Database               as DB
+import qualified Infrastructure.Persistence.Queries    as DB (addContentWithTags,
+                                                              selectUserContents)
+import           Infrastructure.Persistence.Serializer (serializeContent, unserializeContent)
+import qualified Infrastructure.Types.Database         as DB
+
+import           MatchOrNot.Content                    (hasAllTags)
+import           MatchOrNot.Types.Content              (Content, ContentRepository (..))
+import           MatchOrNot.Types.Id                   (Id (Id))
+import           MatchOrNot.Types.Owned                (Owned (value))
+import           MatchOrNot.Types.Tag                  (Tag)
+import           MatchOrNot.Types.User                 (User)
 
 -- |
 -- A 'ContentRepository' based on PostgreSQL

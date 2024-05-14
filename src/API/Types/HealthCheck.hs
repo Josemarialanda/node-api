@@ -2,7 +2,7 @@ module API.Types.HealthCheck
   ( HealthcheckAPI
   ) where
 
-import Servant (NoContent)
+import Servant     (NoContent)
 import Servant.API (Get, JSON, type (:>))
 
 -- |

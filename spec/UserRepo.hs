@@ -1,37 +1,33 @@
 module UserRepo (Table, repository) where
 
-import Control.Monad.Except (throwError)
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Trans.Except (ExceptT)
-import Data.Map.Lazy
-  ( Map
-  , assocs
-  , delete
-  , filter
-  , filterWithKey
-  , insert
-  , size
-  , update
-  )
-import Data.Text (Text)
-import Data.Text.Encoding (encodeUtf8)
-import Data.UUID.V4 (nextRandom)
-import GHC.Conc (TVar, atomically, readTVar, readTVarIO, writeTVar)
-import Hasql.Session
-  ( CommandError (ResultError)
-  , QueryError (QueryError)
-  , ResultError (ServerError)
-  )
-import Impl.Types.User.Error (UserRepositoryError (..))
-import Infrastructure.Types.Persistence.Queries
-  ( WrongNumberOfResults (..)
-  )
-import MatchOrNot.Types.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Types.Id (Id (Id))
-import MatchOrNot.Types.User (User (..), UserRepository (..))
-import PostgreSQL.ErrorCodes (unique_violation)
-import Servant (NoContent (NoContent))
-import Prelude hiding (filter)
+import Control.Monad.Except                     (throwError)
+import Control.Monad.IO.Class                   (liftIO)
+import Control.Monad.Trans.Except               (ExceptT)
+
+import Data.Map.Lazy                            (Map, assocs, delete, filter, filterWithKey, insert,
+                                                 size, update)
+import Data.Text                                (Text)
+import Data.Text.Encoding                       (encodeUtf8)
+import Data.UUID.V4                             (nextRandom)
+
+import GHC.Conc                                 (TVar, atomically, readTVar, readTVarIO, writeTVar)
+
+import Hasql.Session                            (CommandError (ResultError),
+                                                 QueryError (QueryError), ResultError (ServerError))
+
+import Impl.Types.User.Error                    (UserRepositoryError (..))
+
+import Infrastructure.Types.Persistence.Queries (WrongNumberOfResults (..))
+
+import MatchOrNot.Types.EncryptedPassword       (EncryptedPassword)
+import MatchOrNot.Types.Id                      (Id (Id))
+import MatchOrNot.Types.User                    (User (..), UserRepository (..))
+
+import PostgreSQL.ErrorCodes                    (unique_violation)
+
+import Prelude                                  hiding (filter)
+
+import Servant                                  (NoContent (NoContent))
 
 type Table = TVar (Map (Id User) User)
 
@@ -45,8 +41,8 @@ repository userMap =
     , updatePasswordById = inMemoryUpdatePasswordById userMap
     , updateUsernameById = inMemoryUpdateUsernameById userMap
     , getProfileById = undefined
+    , createProfileById = undefined
     , updateProfileById = undefined
-    , createProfile = undefined
     }
 
 inMemoryGetUserByName

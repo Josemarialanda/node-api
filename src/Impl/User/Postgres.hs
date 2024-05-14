@@ -1,26 +1,34 @@
-module Impl.User.Postgres (module Impl.Types.User.Error, repository) where
+module Impl.User.Postgres
+  ( repository
+  ) where
 
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Trans.Except (ExceptT (ExceptT), throwE, withExceptT)
-import Data.ByteString (isInfixOf)
-import Data.Text (Text)
-import Data.UUID.V4 (nextRandom)
-import Hasql.Session
-  ( CommandError (ResultError)
-  , QueryError (QueryError)
-  , ResultError (ServerError)
-  , Session
-  )
-import Impl.Types.User.Error (UserRepositoryError (..))
-import Infrastructure.Database qualified as DB
-import Infrastructure.Persistence.Queries qualified as Query
-import Infrastructure.Persistence.Schema (litProfile, litUser, userId)
-import Infrastructure.Persistence.Serializer (serializeProfile, serializeUser, unserializeProfile, unserializeUser)
-import MatchOrNot.Types.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Types.Id (Id (Id))
-import MatchOrNot.Types.Profile (Profile)
-import MatchOrNot.Types.User (User (User), UserRepository (..))
-import Servant (NoContent (NoContent))
+import           Control.Monad.IO.Class                  (liftIO)
+import           Control.Monad.Trans.Except              (ExceptT (ExceptT), throwE, withExceptT)
+
+import           Data.ByteString                         (isInfixOf)
+import           Data.Text                               (Text)
+import           Data.UUID.V4                            (nextRandom)
+
+import           Hasql.Session                           (CommandError (ResultError),
+                                                          QueryError (QueryError),
+                                                          ResultError (ServerError), Session)
+
+import           Impl.Types.User.Error                   (UserRepositoryError (..))
+
+import qualified Infrastructure.Database                 as DB
+import qualified Infrastructure.Persistence.Queries      as Query
+import           Infrastructure.Persistence.Schema       (litProfile, litUser)
+import           Infrastructure.Persistence.Serializer   (serializeProfile, serializeUser,
+                                                          unserializeProfile, unserializeUser)
+import qualified Infrastructure.Types.Database           as DB
+import           Infrastructure.Types.Persistence.Schema (userId)
+
+import           MatchOrNot.Types.EncryptedPassword      (EncryptedPassword)
+import           MatchOrNot.Types.Id                     (Id (Id))
+import           MatchOrNot.Types.Profile                (Profile)
+import           MatchOrNot.Types.User                   (User (User), UserRepository (..))
+
+import           Servant                                 (NoContent (NoContent))
 
 -- |
 -- A 'UserRepository' based on PostgreSQL
@@ -43,14 +51,14 @@ postgresGetUserByName handle name = do
   eitherUser <- runRepositoryQuery handle (Query.selectUserByName name)
   case eitherUser of
     Right usr -> pure (userId usr, unserializeUser usr)
-    Left e -> throwE $ UnexpectedNumberOfRows e
+    Left e    -> throwE $ UnexpectedNumberOfRows e
 
 postgresGetUserById :: DB.Handle -> Id User -> ExceptT UserRepositoryError IO (Id User, User)
 postgresGetUserById handle userId = do
   eitherUser <- runRepositoryQuery handle (Query.selectUserById userId)
   case eitherUser of
     Right usr -> pure (userId, unserializeUser usr)
-    Left e -> throwE $ UnexpectedNumberOfRows e
+    Left e    -> throwE $ UnexpectedNumberOfRows e
 
 postgresAddUser
   :: DB.Handle
@@ -102,7 +110,7 @@ postgresGetProfileById handle userId = do
   eitherProfile <- runRepositoryQuery handle (Query.getUserProfile userId)
   case eitherProfile of
     Right profile -> pure $ unserializeProfile profile
-    Left e -> throwE $ UnexpectedNumberOfRows e
+    Left e        -> throwE $ UnexpectedNumberOfRows e
 
 postgresUpdateProfileById :: DB.Handle -> Id User -> Profile -> ExceptT UserRepositoryError IO NoContent
 postgresUpdateProfileById handle userId profile = do

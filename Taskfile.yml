@@ -49,7 +49,7 @@ tasks:
   api:format:
     desc: Format the API
     cmds:
-      - find . -name '*.hs' | xargs fourmolu --mode inplace
+      - find . -name '*.hs' | xargs stylish-haskell --inplace
 
   api:test:
     desc: Run API tests

@@ -1,23 +1,14 @@
-module CLIOptions (CLIOptions (..), parse) where
+module CLIOptions
+  ( CLIOptions (..)
+  , parse
+  ) where
 
-import Options.Applicative
-  ( Parser
-  , execParser
-  , fullDesc
-  , help
-  , helper
-  , info
-  , long
-  , metavar
-  , showDefault
-  , strOption
-  , value
-  , (<**>)
-  )
+import Options.Applicative (Parser, execParser, fullDesc, help, helper, info, long, metavar,
+                            showDefault, strOption, value, (<**>))
 
 data CLIOptions = CLIOptions
   { configPath :: FilePath
-  , jwkPath :: FilePath
+  , jwkPath    :: FilePath
   }
 
 parse :: IO CLIOptions

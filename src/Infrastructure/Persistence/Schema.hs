@@ -1,6 +1,5 @@
 module Infrastructure.Persistence.Schema
-  ( module Infrastructure.Types.Persistence.Schema
-  , litUser
+  ( litUser
   , contentSchema
   , contentsTagsSchema
   , litContent
@@ -11,8 +10,10 @@ module Infrastructure.Persistence.Schema
   , litProfile
   ) where
 
-import Infrastructure.Types.Persistence.Schema (Content (..), ContentsTags (..), Profile (..), Tag (..), User (..))
-import Rel8 (Expr, Name, Result, TableSchema (..), lit)
+import Infrastructure.Types.Persistence.Schema (Content (..), ContentsTags (..), Profile (..),
+                                                Tag (..), User (..))
+
+import Rel8                                    (Expr, Name, Result, TableSchema (..), lit)
 
 -- TAG
 

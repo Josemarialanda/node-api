@@ -1,14 +1,14 @@
 module Infrastructure.SystemTime
-  ( module Infrastructure.Types.SystemTime
-  , withHandle
+  ( withHandle
   , currentTime
   , UTCTime
-  )
-where
+  ) where
 
-import Control.Exception (bracket)
-import Control.Monad.IO.Class (MonadIO (liftIO))
-import Data.Time.Clock (UTCTime, getCurrentTime)
+import Control.Exception               (bracket)
+import Control.Monad.IO.Class          (MonadIO (liftIO))
+
+import Data.Time.Clock                 (UTCTime, getCurrentTime)
+
 import Infrastructure.Types.SystemTime (Handle (Handle))
 
 -- |

@@ -3,13 +3,16 @@ module API.Config
   , connectionString
   ) where
 
-import API.Types.Config (ApiConfig (ApiConfig), Config (..), DBName (DBName, getDBName),
-                         DatabaseConfig (..), Host (Host, getHost),
-                         Password (Password, getPassword), Port (Port), User (User, getUser))
+import API.Types.Config       (ApiConfig (ApiConfig), Config (..), DBName (DBName, getDBName),
+                               DatabaseConfig (..), Host (Host, getHost),
+                               Password (Password, getPassword), Port (Port), User (User, getUser))
+
 import Control.Monad.IO.Class (MonadIO)
-import Data.ByteString.Char8 (ByteString, pack)
-import Data.Text (unpack)
-import Toml (TomlCodec, decodeFileExact, diwrap, int, table, text, (.=))
+
+import Data.ByteString.Char8  (ByteString, pack)
+import Data.Text              (unpack)
+
+import Toml                   (TomlCodec, decodeFileExact, diwrap, int, table, text, (.=))
 
 -- |
 -- Reads configuration file at given filepath

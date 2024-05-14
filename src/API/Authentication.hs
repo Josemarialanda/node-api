@@ -2,17 +2,20 @@ module API.Authentication
   ( authenticationServer
   ) where
 
-import API.Types.Authentication (AuthenticationAPI (..))
-import Infrastructure.Types.Authentication.PasswordManager (PasswordManager (generatePassword, generateToken))
-import Infrastructure.Types.Authentication.Token (Token)
-import MatchOrNot.Authentication.Authenticator (Authenticator)
-import qualified MatchOrNot.Authentication.Authenticator as Authenticator
-import MatchOrNot.Authentication.Credentials (Credentials (username))
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.User (User, UserRepository)
-import qualified MatchOrNot.Types.User as UserRepository
-import Servant (Handler)
-import Servant.Server.Generic (AsServer)
+import           API.Types.Authentication                            (AuthenticationAPI (..))
+
+import           Infrastructure.Types.Authentication.PasswordManager (PasswordManager (..))
+import           Infrastructure.Types.Authentication.Token           (Token)
+
+import           MatchOrNot.Authentication.Authenticator             (Authenticator)
+import qualified MatchOrNot.Authentication.Authenticator             as Authenticator
+import           MatchOrNot.Authentication.Credentials               (Credentials (username))
+import           MatchOrNot.Types.Id                                 (Id)
+import           MatchOrNot.Types.User                               (User, UserRepository)
+import qualified MatchOrNot.Types.User                               as UserRepository
+
+import           Servant                                             (Handler)
+import           Servant.Server.Generic                              (AsServer)
 
 authenticationServer
   :: PasswordManager Handler

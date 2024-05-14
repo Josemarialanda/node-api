@@ -1,21 +1,18 @@
-module MatchOrNot.Authentication.Credentials (Password (..), Credentials (..)) where
+module MatchOrNot.Authentication.Credentials
+  ( Password (..)
+  , Credentials (..)
+  ) where
 
-import Data.Aeson (FromJSON (parseJSON), ToJSON (toJSON))
-
--- bytestring
-import Data.ByteString (ByteString)
-
--- openapi3
-import Data.OpenApi (Definitions, NamedSchema, Schema, ToSchema (declareNamedSchema))
-import Data.Proxy (Proxy (Proxy))
-
--- text
-
-import Data.Aeson.Types (Parser, Value)
+import Data.Aeson           (FromJSON (parseJSON), ToJSON (toJSON))
+import Data.Aeson.Types     (Parser, Value)
+import Data.ByteString      (ByteString)
+import Data.OpenApi         (Definitions, NamedSchema, Schema, ToSchema (declareNamedSchema))
 import Data.OpenApi.Declare (Declare)
-import Data.Text (Text)
-import Data.Text.Encoding (decodeUtf8, encodeUtf8)
-import GHC.Generics (Generic)
+import Data.Proxy           (Proxy (Proxy))
+import Data.Text            (Text)
+import Data.Text.Encoding   (decodeUtf8, encodeUtf8)
+
+import GHC.Generics         (Generic)
 
 -- |
 -- A newtype wrapper over 'ByteString' to represent a non encrypted password

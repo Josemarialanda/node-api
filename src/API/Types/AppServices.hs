@@ -3,12 +3,15 @@ module API.Types.AppServices
   ) where
 
 import Infrastructure.Types.Authentication.PasswordManager (PasswordManager)
-import MatchOrNot.Authentication.Authenticator (Authenticator)
-import MatchOrNot.Content (ContentRepository)
-import MatchOrNot.Types.User (UserRepository)
-import Prelude hiding (log)
-import Servant (Handler)
-import Servant.Auth.Server (JWTSettings)
+
+import MatchOrNot.Authentication.Authenticator             (Authenticator)
+import MatchOrNot.Types.Content                            (ContentRepository)
+import MatchOrNot.Types.User                               (UserRepository)
+
+import Prelude                                             hiding (log)
+
+import Servant                                             (Handler)
+import Servant.Auth.Server                                 (JWTSettings)
 
 -- |
 -- Collection of services needed by the application to work

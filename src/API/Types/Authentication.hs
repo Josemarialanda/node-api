@@ -2,13 +2,16 @@ module API.Types.Authentication
   ( AuthenticationAPI (..)
   ) where
 
-import GHC.Generics (Generic)
+import GHC.Generics                              (Generic)
+
 import Infrastructure.Types.Authentication.Token (Token)
-import MatchOrNot.Authentication.Credentials (Credentials)
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.User (User)
-import Servant (JSON, Post, ReqBody, type (:>))
-import Servant.API.Generic (type (:-))
+
+import MatchOrNot.Authentication.Credentials     (Credentials)
+import MatchOrNot.Types.Id                       (Id)
+import MatchOrNot.Types.User                     (User)
+
+import Servant                                   (JSON, Post, ReqBody, type (:>))
+import Servant.API.Generic                       (type (:-))
 
 -- |
 -- The endpoints required to perform authentication

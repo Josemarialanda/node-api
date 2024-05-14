@@ -6,31 +6,44 @@ module API.AppServices
   , start
   ) where
 
-import API.Types.AppServices (AppServices (..))
-import Control.Monad ((<=<))
-import Control.Monad.Except (throwError)
-import Control.Monad.IO.Class (liftIO)
-import Control.Monad.Trans.Except (ExceptT, runExceptT)
-import Crypto.JOSE.JWK (JWK)
-import Hasql.Session (QueryError)
-import qualified Impl.Authentication as Auth
-import qualified Impl.Content.Postgres as ContentPostgres
-import qualified Impl.User.Postgres as UserPostgres
-import Infrastructure.Authentication.PasswordManager (PasswordManager, PasswordManagerError (..),
-                                                      bcryptPasswordManager)
-import qualified Infrastructure.Authentication.PasswordManager as PasswordManager
-import Infrastructure.Logger (logError, logWarning, withContext)
-import qualified Infrastructure.Types.Database as DB
-import qualified Infrastructure.Types.Logger as Logger
-import Infrastructure.Types.Persistence.Queries (WrongNumberOfResults (..))
-import qualified MatchOrNot.Authentication.Authenticator as Auth
-import MatchOrNot.Content (ContentRepository)
-import qualified MatchOrNot.Content as ContentRepository
-import MatchOrNot.Types.User (UserRepository)
-import qualified MatchOrNot.User as UserRepository
-import Prelude hiding (log)
-import Servant (Handler, err401, err403, err500)
-import Servant.Auth.Server (JWTSettings, defaultJWTSettings)
+import           API.Types.AppServices                               (AppServices (..))
+
+import           Control.Monad                                       ((<=<))
+import           Control.Monad.Except                                (throwError)
+import           Control.Monad.IO.Class                              (liftIO)
+import           Control.Monad.Trans.Except                          (ExceptT, runExceptT)
+
+import           Crypto.JOSE.JWK                                     (JWK)
+
+import           Hasql.Session                                       (QueryError)
+
+import qualified Impl.Authentication                                 as Auth
+import qualified Impl.Content.Postgres                               as ContentPostgres
+import qualified Impl.Types.Authentication                           as Auth
+import qualified Impl.Types.User.Error                               as UserPostgres
+import qualified Impl.User.Postgres                                  as UserPostgres
+
+import qualified Infrastructure.Authentication.PasswordManager       as PasswordManager
+import           Infrastructure.Logger                               (logError, logWarning,
+                                                                      withContext)
+import           Infrastructure.Types.Authentication.PasswordManager (PasswordManager,
+                                                                      PasswordManagerError (..))
+import qualified Infrastructure.Types.Database                       as DB
+import qualified Infrastructure.Types.Logger                         as Logger
+import           Infrastructure.Types.Persistence.Queries            (WrongNumberOfResults (..))
+
+import qualified MatchOrNot.Authentication.Authenticator             as Auth
+import qualified MatchOrNot.Content                                  as ContentRepository
+import           MatchOrNot.Types.Content                            (ContentRepository)
+import           MatchOrNot.Types.User                               (UserRepository)
+import qualified MatchOrNot.User                                     as UserRepository
+
+import           Prelude                                             hiding (log)
+
+import           Servant                                             (Handler, err401, err403,
+                                                                      err500)
+import           Servant.Auth.Server                                 (JWTSettings,
+                                                                      defaultJWTSettings)
 
 -- |
 -- Lifts a computation from 'ExceptT e IO' to 'Handler a' using the provided 'handleError' function
@@ -96,7 +109,7 @@ encryptedPasswordManager
   :: Logger.Handle -> JWTSettings -> PasswordManager Handler
 encryptedPasswordManager logHandle =
   PasswordManager.hoist (eitherTToHandler handlePasswordManagerError)
-    . bcryptPasswordManager
+    . PasswordManager.bcryptPasswordManager
   where
     handlePasswordManagerError :: PasswordManagerError -> Handler a
     -- If there was a failure during password hashing, we return a 500 response

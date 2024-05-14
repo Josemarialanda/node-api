@@ -3,7 +3,8 @@ module API.HealthCheck
   ) where
 
 import API.Types.HealthCheck (HealthcheckAPI)
-import Servant (NoContent (NoContent), Server)
+
+import Servant               (NoContent (NoContent), Server)
 
 healthCheckServer :: Server HealthcheckAPI
 healthCheckServer = pure NoContent

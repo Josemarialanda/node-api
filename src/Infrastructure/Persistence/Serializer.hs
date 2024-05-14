@@ -1,36 +1,32 @@
-module Infrastructure.Persistence.Serializer (serializeContent, unserializeContent, serializeUser, unserializeUser, serializeProfile, unserializeProfile) where
+module Infrastructure.Persistence.Serializer
+  ( serializeContent
+  , unserializeContent
+  , serializeUser
+  , unserializeUser
+  , serializeProfile
+  , unserializeProfile
+  ) where
 
-import Infrastructure.Types.Persistence.Schema
-  ( contentContent
-  , contentId
-  , contentUserId
-  , profileAge
-  , profileEmail
-  , profileFirstName
-  , profileLastName
-  , profileSex
-  , tagId
-  , tagName
-  , userId
-  , userName
-  , userPassword
-  )
-import Infrastructure.Types.Persistence.Schema qualified as DB
-  ( Content (Content)
-  , Profile (..)
-  , Tag (Tag)
-  , User (User)
-  )
-import MatchOrNot.Types.Content (Content (..), createContent)
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.Owned (Owned (Owned))
-import MatchOrNot.Types.Owned qualified as Owned (userId, value)
-import MatchOrNot.Types.Profile (Profile (..))
-import MatchOrNot.Types.Tag (Tag (Tag))
-import MatchOrNot.Types.Tag qualified as Tag (name)
-import MatchOrNot.Types.User (User (User))
-import MatchOrNot.Types.User qualified as User (name, password)
-import Rel8 (Result)
+import           Infrastructure.Types.Persistence.Schema (contentContent, contentId, contentUserId,
+                                                          profileAge, profileEmail,
+                                                          profileFirstName, profileLastName,
+                                                          profileSex, tagId, tagName, userId,
+                                                          userName, userPassword)
+import qualified Infrastructure.Types.Persistence.Schema as DB (Content (Content), Profile (..),
+                                                                Tag (Tag), User (User))
+
+import           MatchOrNot.Content                      (createContent)
+import           MatchOrNot.Types.Content                (Content (..))
+import           MatchOrNot.Types.Id                     (Id)
+import           MatchOrNot.Types.Owned                  (Owned (Owned))
+import qualified MatchOrNot.Types.Owned                  as Owned (userId, value)
+import           MatchOrNot.Types.Profile                (Profile (..))
+import           MatchOrNot.Types.Tag                    (Tag (Tag))
+import qualified MatchOrNot.Types.Tag                    as Tag (name)
+import           MatchOrNot.Types.User                   (User (User))
+import qualified MatchOrNot.Types.User                   as User (name, password)
+
+import           Rel8                                    (Result)
 
 -- CONTENT
 

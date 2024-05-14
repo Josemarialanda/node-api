@@ -1,6 +1,5 @@
 module Infrastructure.Persistence.Queries
-  ( module Infrastructure.Types.Persistence.Queries
-  , addContentWithTags
+  ( addContentWithTags
   , addUser
   , updatePasswordById
   , updateUsernameById
@@ -13,69 +12,37 @@ module Infrastructure.Persistence.Queries
   , createUserProfile
   ) where
 
-import Data.List qualified as List (filter)
-import Data.Text (Text)
-import Hasql.Session (Session, statement)
-import Hasql.Statement (Statement)
-import Hasql.Transaction qualified as Transaction (statement)
-import Hasql.Transaction.Sessions
-  ( IsolationLevel (Serializable)
-  , Mode (Write)
-  , transaction
-  )
-import Infrastructure.Persistence.Schema
-  ( Content (..)
-  , ContentsTags (..)
-  , Profile
-  , Tag (..)
-  , User (..)
-  , contentSchema
-  , contentsTagsSchema
-  , litContent
-  , litTag
-  , profileAge
-  , profileEmail
-  , profileFirstName
-  , profileLastName
-  , profileSchema
-  , profileSex
-  , profileUserId
-  , tagSchema
-  , userId
-  , userSchema
-  )
-import Infrastructure.Types.Persistence.Queries
-  ( WrongNumberOfResults (..)
-  )
-import MatchOrNot.EncryptedPassword (EncryptedPassword)
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.Profile qualified as Profile
-import MatchOrNot.Types.User qualified as Domain (User)
-import Rel8
-  ( Delete (..)
-  , Expr
-  , Insert (..)
-  , Name
-  , OnConflict (..)
-  , Query
-  , Rel8able
-  , Result
-  , TableSchema
-  , Update (..)
-  , delete
-  , each
-  , filter
-  , in_
-  , insert
-  , lit
-  , many
-  , select
-  , update
-  , values
-  , where_
-  , (==.)
-  )
-import Prelude hiding (filter)
+import qualified Data.List                                as List (filter)
+import           Data.Text                                (Text)
+
+import           Hasql.Session                            (Session, statement)
+import           Hasql.Statement                          (Statement)
+import qualified Hasql.Transaction                        as Transaction (statement)
+import           Hasql.Transaction.Sessions               (IsolationLevel (Serializable),
+                                                           Mode (Write), transaction)
+
+import           Infrastructure.Persistence.Schema        (contentSchema, contentsTagsSchema,
+                                                           litContent, litTag, profileSchema,
+                                                           tagSchema, userSchema)
+import           Infrastructure.Types.Persistence.Queries (WrongNumberOfResults (..))
+import           Infrastructure.Types.Persistence.Schema  (Content (..), ContentsTags (..), Profile,
+                                                           Tag (..), User (..), profileAge,
+                                                           profileEmail, profileFirstName,
+                                                           profileLastName, profileSex,
+                                                           profileUserId, userId)
+
+import           MatchOrNot.Types.EncryptedPassword       (EncryptedPassword)
+import           MatchOrNot.Types.Id                      (Id)
+import qualified MatchOrNot.Types.Profile                 as Profile
+import qualified MatchOrNot.Types.User                    as Domain (User)
+
+import           Prelude                                  hiding (filter)
+
+import           Rel8                                     (Delete (..), Expr, Insert (..), Name,
+                                                           OnConflict (..), Query, Rel8able, Result,
+                                                           TableSchema, Update (..), delete, each,
+                                                           filter, in_, insert, lit, many, select,
+                                                           update, values, where_, (==.))
 
 -- SELECT CONTENTS
 

@@ -1,7 +1,10 @@
-module Impl.Types.Authentication where
+module Impl.Types.Authentication
+  ( Error(..)
+  ) where
 
-import Impl.User.Postgres (UserRepositoryError)
-import Infrastructure.Persistence.Queries (WrongNumberOfResults)
+import Impl.Types.User.Error                    (UserRepositoryError)
+
+import Infrastructure.Types.Persistence.Queries (WrongNumberOfResults)
 
 -- |
 -- How 'authenticateUser' can actually fail

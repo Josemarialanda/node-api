@@ -1,14 +1,18 @@
-module MatchOrNot.Types.Content (Content (..), ContentRepository (..), createContent) where
+module MatchOrNot.Types.Content
+  ( Content (..)
+  , ContentRepository (..)
+  ) where
 
-import Data.Aeson (FromJSON, ToJSON)
-import Data.List (nub)
-import Data.OpenApi (ToSchema)
-import Data.Text (Text)
-import GHC.Generics (Generic)
-import MatchOrNot.Types.Id (Id)
+import Data.Aeson             (FromJSON, ToJSON)
+import Data.OpenApi           (ToSchema)
+import Data.Text              (Text)
+
+import GHC.Generics           (Generic)
+
+import MatchOrNot.Types.Id    (Id)
 import MatchOrNot.Types.Owned (Owned)
-import MatchOrNot.Types.Tag (Tag)
-import MatchOrNot.Types.User (User)
+import MatchOrNot.Types.Tag   (Tag)
+import MatchOrNot.Types.User  (User)
 
 -- |
 -- A 'ContentRepository' represents a collection of 'Content's.
@@ -16,7 +20,7 @@ import MatchOrNot.Types.User (User)
 data ContentRepository m = ContentRepository
   { selectUserContentsByTags :: Id User -> [Tag] -> m [Owned (Content Tag)]
   -- ^ selects all the 'Content's 'Owned' by a 'User' with a given 'Id' and indexed by all the provided 'Tag's
-  , addContentWithTags :: Id User -> Content Tag -> m (Id (Content Tag))
+  , addContentWithTags       :: Id User -> Content Tag -> m (Id (Content Tag))
   -- ^ adds a 'Content' indexed by some 'Tag's for a 'User' identified by a given 'Id'
   }
 
@@ -24,12 +28,9 @@ data ContentRepository m = ContentRepository
 -- A 'Content' is just a text indexed by a list of 'tag's
 data Content tag = Content
   { message :: Text
-  , tags :: [tag]
+  , tags    :: [tag]
   }
   deriving stock (Eq, Show, Functor, Generic)
-
-createContent :: Eq tag => Text -> [tag] -> Content tag
-createContent message tags = Content message (nub tags)
 
 instance Foldable Content where
   foldMap :: Monoid m => (a -> m) -> Content a -> m

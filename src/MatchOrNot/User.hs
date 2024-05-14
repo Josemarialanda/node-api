@@ -1,4 +1,6 @@
-module MatchOrNot.User (hoist) where
+module MatchOrNot.User
+  ( hoist
+  ) where
 
 import MatchOrNot.Types.User (UserRepository (..))
 

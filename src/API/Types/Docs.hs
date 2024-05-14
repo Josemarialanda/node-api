@@ -3,7 +3,8 @@ module API.Types.Docs
   ) where
 
 import Data.OpenApi (OpenApi)
-import Servant (Get, JSON, (:>))
+
+import Servant      (Get, JSON, (:>))
 
 -- |
 -- A single endpoint to expose the OpenAPI documentation of the application

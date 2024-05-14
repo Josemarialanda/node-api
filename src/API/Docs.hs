@@ -3,13 +3,16 @@ module API.Docs
   ) where
 
 import API.Types.Authentication (AuthenticationAPI)
-import API.Types.Docs (DocsAPI)
-import API.Types.MatchOrNot (MatchOrNotAPI)
-import Control.Lens ((&), (.~), (?~))
-import Data.OpenApi (description, info, title, version)
-import Data.Proxy (Proxy (Proxy))
-import Servant (NamedRoutes, Server)
-import Servant.OpenApi (toOpenApi)
+import API.Types.Docs           (DocsAPI)
+import API.Types.MatchOrNot     (MatchOrNotAPI)
+
+import Control.Lens             ((&), (.~), (?~))
+
+import Data.OpenApi             (description, info, title, version)
+import Data.Proxy               (Proxy (Proxy))
+
+import Servant                  (NamedRoutes, Server)
+import Servant.OpenApi          (toOpenApi)
 
 docsServer :: Server DocsAPI
 docsServer =

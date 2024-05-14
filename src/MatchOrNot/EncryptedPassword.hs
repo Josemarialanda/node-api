@@ -1,9 +1,16 @@
-module MatchOrNot.EncryptedPassword (EncryptedPassword, asBytestring, encryptPassword, validatePassword) where
+module MatchOrNot.EncryptedPassword
+  ( asBytestring
+  , encryptPassword
+  , validatePassword
+  ) where
 
-import Crypto.BCrypt (fastBcryptHashingPolicy, hashPasswordUsingPolicy)
-import Crypto.BCrypt qualified as BCrypt (validatePassword)
-import Data.ByteString (ByteString)
-import MatchOrNot.Types.EncryptedPassword (EncryptedPassword (EncryptedPassword, asBytestring))
+import           Crypto.BCrypt                      (fastBcryptHashingPolicy,
+                                                     hashPasswordUsingPolicy)
+import qualified Crypto.BCrypt                      as BCrypt (validatePassword)
+
+import           Data.ByteString                    (ByteString)
+
+import           MatchOrNot.Types.EncryptedPassword (EncryptedPassword (EncryptedPassword, asBytestring))
 
 -- |
 -- encrypt a 'ByteString' into an 'EncryptedPassword' using bcrypt with 'fastBcryptHashingPolicy'

@@ -1,18 +1,20 @@
 module Infrastructure.Database
-  ( module Infrastructure.Types.Database
-  , withHandle
+  ( withHandle
   , runQuery
-  )
-where
+  ) where
 
-import qualified API.Config as AppConfig
-import qualified API.Types.Config as AppConfig
-import Control.Exception (bracket)
-import Data.ByteString.Char8 (unpack)
-import Data.Maybe (fromMaybe)
-import Hasql.Connection (acquire, release)
-import Hasql.Session (QueryError, Session, run)
-import Infrastructure.Types.Database (Config (..), Handle (..))
+import qualified API.Config                    as AppConfig
+import qualified API.Types.Config              as AppConfig
+
+import           Control.Exception             (bracket)
+
+import           Data.ByteString.Char8         (unpack)
+import           Data.Maybe                    (fromMaybe)
+
+import           Hasql.Connection              (acquire, release)
+import           Hasql.Session                 (QueryError, Session, run)
+
+import           Infrastructure.Types.Database (Config (..), Handle (..))
 
 new :: Config -> IO Handle
 new config = do

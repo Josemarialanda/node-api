@@ -4,15 +4,18 @@ module API.Types.Application
   ) where
 
 import API.Types.Authentication (AuthenticationAPI)
-import API.Types.Docs (DocsAPI)
-import API.Types.HealthCheck (HealthcheckAPI)
-import API.Types.MatchOrNot (MatchOrNotAPI)
-import GHC.Generics (Generic)
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.User (User)
-import Servant.API (NamedRoutes, type (:>))
-import Servant.API.Generic ((:-))
-import Servant.Auth (Auth, JWT)
+import API.Types.Docs           (DocsAPI)
+import API.Types.HealthCheck    (HealthcheckAPI)
+import API.Types.MatchOrNot     (MatchOrNotAPI)
+
+import GHC.Generics             (Generic)
+
+import MatchOrNot.Types.Id      (Id)
+import MatchOrNot.Types.User    (User)
+
+import Servant.API              (NamedRoutes, type (:>))
+import Servant.API.Generic      ((:-))
+import Servant.Auth             (Auth, JWT)
 
 type API = NamedRoutes ApplicationAPI
 

@@ -1,18 +1,19 @@
 module TestServices where
 
-import API.AppServices
-  ( AppServices (..)
-  , connectedAuthenticateUser
-  , connectedContentRepository
-  , connectedUserRepository
-  , encryptedPasswordManager
-  )
-import ContentRepo qualified
-import GHC.Conc (newTVarIO)
-import Infrastructure.Logger as Logger (withHandle)
-import Infrastructure.SystemTime as SystemTime (withHandle)
-import Servant.Auth.Server (defaultJWTSettings, generateKey)
-import UserRepo qualified
+import           API.AppServices           (connectedAuthenticateUser, connectedContentRepository,
+                                            connectedUserRepository, encryptedPasswordManager)
+import           API.Types.AppServices     (AppServices (..))
+
+import qualified ContentRepo
+
+import           GHC.Conc                  (newTVarIO)
+
+import           Infrastructure.Logger     as Logger (withHandle)
+import           Infrastructure.SystemTime as SystemTime (withHandle)
+
+import           Servant.Auth.Server       (defaultJWTSettings, generateKey)
+
+import qualified UserRepo
 
 testServices :: IO AppServices
 testServices = do

@@ -1,61 +1,34 @@
 steps:
   - simple_align:
-      cases: true
-      top_level_patterns: true
-      records: true
+      cases: always
+      top_level_patterns: always
+      records: always
+      multi_way_if: always
 
-  # Import cleanup
   - imports:
-      align: none
+      align: file
       list_align: after_alias
-      pad_module_names: false
+      pad_module_names: true
       long_list_align: inline
       empty_list_align: inherit
-      list_padding: 4
+      list_padding: 2
       separate_lists: true
       space_surround: false
+      post_qualify: false
+      group_imports: true
 
   - language_pragmas:
       style: vertical
       remove_redundant: true
+      align: true
 
-  # Remove trailing whitespace
+  - tabs:
+      spaces: 2
+
   - trailing_whitespace: {}
 
 columns: 100
 
 newline: native
 
-language_extensions:
-  - BangPatterns
-  - ConstraintKinds
-  - DataKinds
-  - DefaultSignatures
-  - DeriveAnyClass
-  - DeriveDataTypeable
-  - DeriveGeneric
-  - DerivingStrategies
-  - DerivingVia
-  - ExplicitNamespaces
-  - FlexibleContexts
-  - FlexibleInstances
-  - FunctionalDependencies
-  - GADTs
-  - GeneralizedNewtypeDeriving
-  - InstanceSigs
-  - KindSignatures
-  - LambdaCase
-  - MultiParamTypeClasses
-  - MultiWayIf
-  - NamedFieldPuns
-  - NoImplicitPrelude
-  - OverloadedStrings
-  - QuasiQuotes
-  - RecordWildCards
-  - ScopedTypeVariables
-  - StandaloneDeriving
-  - TemplateHaskell
-  - TupleSections
-  - TypeApplications
-  - TypeFamilies
-  - ViewPatterns
+cabal: true

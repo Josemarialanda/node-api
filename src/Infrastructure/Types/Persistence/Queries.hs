@@ -1,4 +1,6 @@
-module Infrastructure.Types.Persistence.Queries (WrongNumberOfResults (..)) where
+module Infrastructure.Types.Persistence.Queries
+  ( WrongNumberOfResults (..)
+  ) where
 
 -- |
 -- Describes the possible error cases for queries that expect exactly one row as a result.

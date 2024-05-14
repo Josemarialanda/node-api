@@ -1,21 +1,23 @@
 module ContentRepo (Table, repository) where
 
-import Control.Monad.IO.Class (liftIO)
+import Control.Monad.IO.Class     (liftIO)
 import Control.Monad.Trans.Except (ExceptT)
-import Data.Map.Lazy (Map, elems, filter, insert)
-import Data.UUID.V4 (nextRandom)
-import GHC.Conc (TVar, atomically, readTVar, writeTVar)
-import Hasql.Session (QueryError)
-import MatchOrNot.Content
-  ( Content
-  , ContentRepository (..)
-  , hasAllTags
-  )
-import MatchOrNot.Types.Id (Id (Id))
-import MatchOrNot.Types.Owned (Owned (..))
-import MatchOrNot.Types.Tag (Tag)
-import MatchOrNot.Types.User (User)
-import Prelude hiding (filter)
+
+import Data.Map.Lazy              (Map, elems, filter, insert)
+import Data.UUID.V4               (nextRandom)
+
+import GHC.Conc                   (TVar, atomically, readTVar, writeTVar)
+
+import Hasql.Session              (QueryError)
+
+import MatchOrNot.Content         (hasAllTags)
+import MatchOrNot.Types.Content   (Content, ContentRepository (..))
+import MatchOrNot.Types.Id        (Id (Id))
+import MatchOrNot.Types.Owned     (Owned (..))
+import MatchOrNot.Types.Tag       (Tag)
+import MatchOrNot.Types.User      (User)
+
+import Prelude                    hiding (filter)
 
 type Table = TVar (Map (Id (Content Tag)) (Owned (Content Tag)))
 

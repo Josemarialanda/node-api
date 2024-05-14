@@ -1,19 +1,29 @@
-module App (run) where
+module App
+  ( run
+  ) where
 
-import API.Application (app)
-import API.AppServices (start)
-import qualified API.Config as Config
-import qualified API.Types.Config as Config
-import CLIOptions (CLIOptions (configPath))
+import           API.Application                      (app)
+import           API.AppServices                      (start)
+import qualified API.Config                           as Config
+import qualified API.Types.Config                     as Config
+
+import           CLIOptions                           (CLIOptions (configPath))
 import qualified CLIOptions
-import qualified Infrastructure.Database as DB
-import qualified Infrastructure.Logger as Logger
-import qualified Infrastructure.SystemTime as SystemTime
-import qualified MatchOrNot.JSONWebKey as JWK
-import Network.Wai (Application, Middleware)
-import qualified Network.Wai.Handler.Warp as Warp
-import Network.Wai.Middleware.Cors (cors, corsRequestHeaders, simpleCorsResourcePolicy)
-import Network.Wai.Middleware.RequestLogger (logStdoutDev)
+
+import qualified Infrastructure.Database              as DB
+import qualified Infrastructure.Logger                as Logger
+import qualified Infrastructure.SystemTime            as SystemTime
+import qualified Infrastructure.Types.Database        as DB
+import qualified Infrastructure.Types.Logger          as Logger
+import qualified Infrastructure.Types.SystemTime      as SystemTime
+
+import qualified MatchOrNot.JSONWebKey                as JWK
+
+import           Network.Wai                          (Application, Middleware)
+import qualified Network.Wai.Handler.Warp             as Warp
+import           Network.Wai.Middleware.Cors          (cors, corsRequestHeaders,
+                                                       simpleCorsResourcePolicy)
+import           Network.Wai.Middleware.RequestLogger (logStdoutDev)
 
 -- |
 -- Main entry point of the application.

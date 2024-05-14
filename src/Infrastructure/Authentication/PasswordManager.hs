@@ -1,23 +1,27 @@
-module Infrastructure.Authentication.PasswordManager (module Infrastructure.Types.Authentication.PasswordManager, hoist, bcryptPasswordManager) where
+module Infrastructure.Authentication.PasswordManager
+  ( hoist
+  , bcryptPasswordManager
+  ) where
 
-import Control.Category ((>>>))
-import Control.Monad.Trans.Except (ExceptT (ExceptT))
-import Data.Bifunctor (bimap)
-import Infrastructure.Types.Authentication.PasswordManager
-  ( PasswordManager (..)
-  , PasswordManagerError (..)
-  )
-import Infrastructure.Types.Authentication.Token (Token (Token))
-import MatchOrNot.Authentication.Credentials
-  ( Credentials
-  , Password (asBytestring)
-  )
-import MatchOrNot.Authentication.Credentials qualified as Credentials (password)
-import MatchOrNot.EncryptedPassword (EncryptedPassword, encryptPassword)
-import MatchOrNot.EncryptedPassword qualified as Encrypted (validatePassword)
-import MatchOrNot.Types.Id (Id)
-import MatchOrNot.Types.User (User (password))
-import Servant.Auth.Server (JWTSettings, makeJWT)
+import           Control.Category                                    ((>>>))
+import           Control.Monad.Trans.Except                          (ExceptT (ExceptT))
+
+import           Data.Bifunctor                                      (bimap)
+
+import           Infrastructure.Types.Authentication.PasswordManager (PasswordManager (..),
+                                                                      PasswordManagerError (..))
+import           Infrastructure.Types.Authentication.Token           (Token (Token))
+
+import           MatchOrNot.Authentication.Credentials               (Credentials,
+                                                                      Password (asBytestring))
+import qualified MatchOrNot.Authentication.Credentials               as Credentials (password)
+import           MatchOrNot.EncryptedPassword                        (encryptPassword)
+import qualified MatchOrNot.EncryptedPassword                        as Encrypted (validatePassword)
+import           MatchOrNot.Types.EncryptedPassword                  (EncryptedPassword)
+import           MatchOrNot.Types.Id                                 (Id)
+import           MatchOrNot.Types.User                               (User (password))
+
+import           Servant.Auth.Server                                 (JWTSettings, makeJWT)
 
 -- |
 -- Given a natural transformation between a context 'm' and a context 'n', it allows to change the context where 'PasswordManager' is operating
