@@ -1,9 +1,9 @@
 [database]
   host     = "localhost"
   port     = 5432
-  dbname   = "matchOrNot-db"
-  user     = "matchOrNot-user"
-  password = "matchOrNot-pwd"
+  dbname   = "node-api-db"
+  user     = "node-api-user"
+  password = "node-api-pwd"
 
 [api]
   port = 8080

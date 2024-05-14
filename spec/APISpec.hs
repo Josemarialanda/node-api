@@ -1,13 +1,13 @@
-module MatchOrNotSpec where
+module APISpec where
 
 import           API.Application                           (app)
 import           API.Types.Application                     (API, ApplicationAPI (..))
 import           API.Types.Authentication                  (AuthenticationAPI (..))
-import           API.Types.MatchOrNot                      (MatchOrNotAPI (..))
+import           API.Types.Main                            (MainAPI (..))
 
-import           Core.Authentication.Credentials           (Credentials (Credentials),
-                                                            Password (Password))
 import           Core.Content                              (createContent)
+import           Core.Types.Authentication.Credentials     (Credentials (Credentials),
+                                                            Password (Password))
 import           Core.Types.Content                        (Content)
 import           Core.Types.Id                             (Id)
 import           Core.Types.Owned                          (Owned (Owned))
@@ -70,14 +70,14 @@ addUserContent
   :: ClientEnv -> Token -> Content Tag -> IO (Either ClientError (Id (Content Tag)))
 addUserContent env token content =
   runClientM
-    ((addContent . matchOrNot apiClient) (toServantToken token) content)
+    ((addContent . main apiClient) (toServantToken token) content)
     env
 
 getUserContents
   :: ClientEnv -> Token -> [Tag] -> IO (Either ClientError [Owned (Content Tag)])
 getUserContents env token tags =
   runClientM
-    ((getContents . matchOrNot apiClient) (toServantToken token) tags)
+    ((getContents . main apiClient) (toServantToken token) tags)
     env
 
 spec :: Spec

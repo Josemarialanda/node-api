@@ -1,4 +1,4 @@
-name:               match-or-not
+name:               node-api
 version:            0.1.0.0
 author:             Jose Maria Landa Chavez
 maintainer:         josemaria.landa@gmail.com
@@ -66,18 +66,18 @@ dependencies:
   - warp
 
 executables:
-  match-or-not-exe:
+  node-api-exe:
     source-dirs:    app
     main:           Main.hs
     dependencies:
-      - match-or-not
+      - node-api
 
 tests:
-  match-or-not-spec:
+  node-api-spec:
     main:           Spec.hs
     source-dirs:    spec
     dependencies:
-      - match-or-not
+      - node-api
       - containers
       - hspec
       - http-client

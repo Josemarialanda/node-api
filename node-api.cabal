@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           match-or-not
+name:           node-api
 version:        0.1.0.0
 author:         Jose Maria Landa Chavez
 maintainer:     josemaria.landa@gmail.com
@@ -21,14 +21,14 @@ library
       API.Authentication
       API.Docs
       API.HealthCheck
-      API.MatchOrNot
+      API.Main
       API.Types.Application
       API.Types.AppServices
       API.Types.Authentication
       API.Types.Config
       API.Types.Docs
       API.Types.HealthCheck
-      API.Types.MatchOrNot
+      API.Types.Main
       App
       Application.Authentication
       Application.Content.Postgres
@@ -66,7 +66,7 @@ library
       Infrastructure.Types.Logger
       Infrastructure.Types.SystemTime
   other-modules:
-      Paths_match_or_not
+      Paths_node_api
   hs-source-dirs:
       src
   default-extensions:
@@ -116,10 +116,10 @@ library
     , warp
   default-language: GHC2021
 
-executable match-or-not-exe
+executable node-api-exe
   main-is: Main.hs
   other-modules:
-      Paths_match_or_not
+      Paths_node_api
   hs-source-dirs:
       app
   default-extensions:
@@ -148,8 +148,8 @@ executable match-or-not-exe
     , hasql-transaction
     , jose
     , lens
-    , match-or-not
     , mtl
+    , node-api
     , openapi3
     , optparse-applicative
     , postgresql-error-codes
@@ -170,15 +170,15 @@ executable match-or-not-exe
     , warp
   default-language: GHC2021
 
-test-suite match-or-not-spec
+test-suite node-api-spec
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
+      APISpec
       ContentRepo
-      MatchOrNotSpec
       TestServices
       UserRepo
-      Paths_match_or_not
+      Paths_node_api
   hs-source-dirs:
       spec
   default-extensions:
@@ -210,8 +210,8 @@ test-suite match-or-not-spec
     , http-types
     , jose
     , lens
-    , match-or-not
     , mtl
+    , node-api
     , openapi3
     , optparse-applicative
     , postgresql-error-codes

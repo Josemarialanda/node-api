@@ -1,5 +1,5 @@
-module API.Types.MatchOrNot
-  ( MatchOrNotAPI (..)
+module API.Types.Main
+  ( MainAPI (..)
   ) where
 
 import Core.Types.Content  (Content)
@@ -20,7 +20,7 @@ import Servant.API.Generic ((:-))
 
 -- |
 -- The main endpoints of the application API
-data MatchOrNotAPI mode = MatchOrNotAPI
+data MainAPI mode = MainAPI
   { addContent     :: mode :- "add-content" :> ReqBody '[JSON] (Content Tag) :> Post '[JSON] (Id (Content Tag))
   -- ^ Add a new 'Content'
   , getContents    :: mode :- "get-contents" :> QueryParams "tag" Tag :> Get '[JSON] [Owned (Content Tag)]

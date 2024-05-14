@@ -1,5 +1,5 @@
 {
-  description = "Backend and frontend for match-or-not dating app";
+  description = "Backend for the Node dating app";
 
   inputs = {
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
@@ -10,7 +10,7 @@
   outputs = { self, nixpkgs, flake-utils, pre-commit-hooks }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        packageName = "match-or-not";
+        packageName = "node-api";
         pkgs = nixpkgs.legacyPackages.${system};
         haskellPackages = pkgs.haskellPackages.override {
           overrides = self: super: rec {

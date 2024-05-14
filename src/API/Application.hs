@@ -5,10 +5,10 @@ module API.Application
 import API.Authentication                                  (authenticationServer)
 import API.Docs                                            (docsServer)
 import API.HealthCheck                                     (healthCheckServer)
-import API.MatchOrNot                                      (matchOrNotServer)
+import API.Main                                            (mainServer)
 import API.Types.Application                               (API, ApplicationAPI (..))
 import API.Types.AppServices                               (AppServices (..))
-import API.Types.MatchOrNot                                (MatchOrNotAPI)
+import API.Types.Main                                      (MainAPI)
 
 import Core.Types.Content                                  (ContentRepository)
 import Core.Types.Id                                       (Id)
@@ -47,7 +47,7 @@ server
     , authenticateUser
     } =
     ApplicationAPI
-      { matchOrNot = authenticatedMatchOrNotServer passwordManager userRepository contentRepository
+      { main = authenticatedMainServer passwordManager userRepository contentRepository
       , docs = docsServer
       , healthCheck = healthCheckServer
       , authentication = authenticationServer passwordManager authenticateUser userRepository
@@ -56,12 +56,12 @@ server
 -- |
 -- For the endpoints which actually require authentication, checks whether the request provides a valid authentication token.
 -- Otherwise it returns a 401 response
-authenticatedMatchOrNotServer
+authenticatedMainServer
   :: PasswordManager Handler
   -> UserRepository Handler
   -> ContentRepository Handler
   -> AuthResult (Id User)
-  -> MatchOrNotAPI AsServer
-authenticatedMatchOrNotServer passwordManager userRepository contentRepository = \case
-  (Authenticated userId) -> matchOrNotServer userId passwordManager userRepository contentRepository
+  -> MainAPI AsServer
+authenticatedMainServer passwordManager userRepository contentRepository = \case
+  (Authenticated userId) -> mainServer userId passwordManager userRepository contentRepository
   _ -> throwAll err401

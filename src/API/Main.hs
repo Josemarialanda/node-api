@@ -1,8 +1,8 @@
-module API.MatchOrNot
-  ( matchOrNotServer
+module API.Main
+  ( mainServer
   ) where
 
-import API.Types.MatchOrNot                                (MatchOrNotAPI (..))
+import API.Types.Main                                      (MainAPI (..))
 
 import Control.Monad.Except                                (throwError)
 
@@ -22,14 +22,14 @@ import Servant                                             (Handler, NoContent, 
 import Servant.Server                                      (ServerError (..))
 import Servant.Server.Generic                              (AsServer)
 
-matchOrNotServer
+mainServer
   :: Id User
   -> PasswordManager Handler
   -> UserRepository Handler
   -> ContentRepository Handler
-  -> MatchOrNotAPI AsServer
-matchOrNotServer userId passwordManager userRepository contentRepository =
-  MatchOrNotAPI
+  -> MainAPI AsServer
+mainServer userId passwordManager userRepository contentRepository =
+  MainAPI
     { addContent = addContentWithTags contentRepository userId
     , getContents = selectUserContentsByTags contentRepository userId
     , deleteUser = deleteUserById userRepository userId
