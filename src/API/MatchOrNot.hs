@@ -6,15 +6,15 @@ import API.Types.MatchOrNot                                (MatchOrNotAPI (..))
 
 import Control.Monad.Except                                (throwError)
 
+import Core.Types.Authentication.Credentials               (Credentials (..), Password (..))
+import Core.Types.Content                                  (ContentRepository (addContentWithTags, selectUserContentsByTags))
+import Core.Types.Id                                       (Id)
+import Core.Types.User                                     (User (..), UserRepository (..))
+
 import Data.Text                                           (Text)
 import Data.Text.Encoding                                  (encodeUtf8)
 
 import Infrastructure.Types.Authentication.PasswordManager (PasswordManager (generatePassword))
-
-import MatchOrNot.Authentication.Credentials               (Credentials (..), Password (..))
-import MatchOrNot.Types.Content                            (ContentRepository (addContentWithTags, selectUserContentsByTags))
-import MatchOrNot.Types.Id                                 (Id)
-import MatchOrNot.Types.User                               (User (..), UserRepository (..))
 
 import Prelude                                             hiding (getContents)
 

@@ -3,19 +3,19 @@ module ContentRepo (Table, repository) where
 import Control.Monad.IO.Class     (liftIO)
 import Control.Monad.Trans.Except (ExceptT)
 
+import Core.Content               (hasAllTags)
+import Core.Types.Content         (Content, ContentRepository (..))
+import Core.Types.Id              (Id (Id))
+import Core.Types.Owned           (Owned (..))
+import Core.Types.Tag             (Tag)
+import Core.Types.User            (User)
+
 import Data.Map.Lazy              (Map, elems, filter, insert)
 import Data.UUID.V4               (nextRandom)
 
 import GHC.Conc                   (TVar, atomically, readTVar, writeTVar)
 
 import Hasql.Session              (QueryError)
-
-import MatchOrNot.Content         (hasAllTags)
-import MatchOrNot.Types.Content   (Content, ContentRepository (..))
-import MatchOrNot.Types.Id        (Id (Id))
-import MatchOrNot.Types.Owned     (Owned (..))
-import MatchOrNot.Types.Tag       (Tag)
-import MatchOrNot.Types.User      (User)
 
 import Prelude                    hiding (filter)
 

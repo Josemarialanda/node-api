@@ -1,33 +1,33 @@
 module UserRepo (Table, repository) where
 
-import Control.Monad.Except                     (throwError)
-import Control.Monad.IO.Class                   (liftIO)
-import Control.Monad.Trans.Except               (ExceptT)
+import Application.Types.User.Error          (UserRepositoryError (..))
 
-import Data.Map.Lazy                            (Map, assocs, delete, filter, filterWithKey, insert,
-                                                 size, update)
-import Data.Text                                (Text)
-import Data.Text.Encoding                       (encodeUtf8)
-import Data.UUID.V4                             (nextRandom)
+import Control.Monad.Except                  (throwError)
+import Control.Monad.IO.Class                (liftIO)
+import Control.Monad.Trans.Except            (ExceptT)
 
-import GHC.Conc                                 (TVar, atomically, readTVar, readTVarIO, writeTVar)
+import Core.Types.EncryptedPassword          (EncryptedPassword)
+import Core.Types.Id                         (Id (Id))
+import Core.Types.User                       (User (..), UserRepository (..))
 
-import Hasql.Session                            (CommandError (ResultError),
-                                                 QueryError (QueryError), ResultError (ServerError))
+import Data.Map.Lazy                         (Map, assocs, delete, filter, filterWithKey, insert,
+                                              size, update)
+import Data.Text                             (Text)
+import Data.Text.Encoding                    (encodeUtf8)
+import Data.UUID.V4                          (nextRandom)
 
-import Impl.Types.User.Error                    (UserRepositoryError (..))
+import GHC.Conc                              (TVar, atomically, readTVar, readTVarIO, writeTVar)
 
-import Infrastructure.Types.Persistence.Queries (WrongNumberOfResults (..))
+import Hasql.Session                         (CommandError (ResultError), QueryError (QueryError),
+                                              ResultError (ServerError))
 
-import MatchOrNot.Types.EncryptedPassword       (EncryptedPassword)
-import MatchOrNot.Types.Id                      (Id (Id))
-import MatchOrNot.Types.User                    (User (..), UserRepository (..))
+import Infrastructure.Types.Database.Queries (WrongNumberOfResults (..))
 
-import PostgreSQL.ErrorCodes                    (unique_violation)
+import PostgreSQL.ErrorCodes                 (unique_violation)
 
-import Prelude                                  hiding (filter)
+import Prelude                               hiding (filter)
 
-import Servant                                  (NoContent (NoContent))
+import Servant                               (NoContent (NoContent))
 
 type Table = TVar (Map (Id User) User)
 

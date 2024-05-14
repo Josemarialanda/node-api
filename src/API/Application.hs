@@ -10,13 +10,13 @@ import API.Types.Application                               (API, ApplicationAPI 
 import API.Types.AppServices                               (AppServices (..))
 import API.Types.MatchOrNot                                (MatchOrNotAPI)
 
+import Core.Types.Content                                  (ContentRepository)
+import Core.Types.Id                                       (Id)
+import Core.Types.User                                     (User, UserRepository)
+
 import Data.Proxy                                          (Proxy (..))
 
 import Infrastructure.Types.Authentication.PasswordManager (PasswordManager)
-
-import MatchOrNot.Types.Content                            (ContentRepository)
-import MatchOrNot.Types.Id                                 (Id)
-import MatchOrNot.Types.User                               (User, UserRepository)
 
 import Network.Wai                                         (Application)
 
@@ -28,17 +28,13 @@ import Servant.Auth.Server                                 (AuthResult (Authenti
 import Servant.Server.Generic                              (AsServer)
 
 -- |
--- For the endpoints which actually require authentication, checks whether the request provides a valid authentication token.
--- Otherwise it returns a 401 response
-authenticatedMatchOrNotServer
-  :: PasswordManager Handler
-  -> UserRepository Handler
-  -> ContentRepository Handler
-  -> AuthResult (Id User)
-  -> MatchOrNotAPI AsServer
-authenticatedMatchOrNotServer passwordManager userRepository contentRepository = \case
-  (Authenticated userId) -> matchOrNotServer userId passwordManager userRepository contentRepository
-  _ -> throwAll err401
+-- The main application server, which serves the API
+app :: AppServices -> Application
+app appServices =
+  serveWithContext
+    (Proxy :: Proxy API)
+    (defaultCookieSettings :. jwtSettings appServices :. EmptyContext)
+    (server appServices)
 
 -- |
 -- Setup all the application server, providing the services needed by the various endpoints
@@ -57,9 +53,15 @@ server
       , authentication = authenticationServer passwordManager authenticateUser userRepository
       }
 
-app :: AppServices -> Application
-app appServices =
-  serveWithContext
-    (Proxy :: Proxy API)
-    (defaultCookieSettings :. jwtSettings appServices :. EmptyContext)
-    (server appServices)
+-- |
+-- For the endpoints which actually require authentication, checks whether the request provides a valid authentication token.
+-- Otherwise it returns a 401 response
+authenticatedMatchOrNotServer
+  :: PasswordManager Handler
+  -> UserRepository Handler
+  -> ContentRepository Handler
+  -> AuthResult (Id User)
+  -> MatchOrNotAPI AsServer
+authenticatedMatchOrNotServer passwordManager userRepository contentRepository = \case
+  (Authenticated userId) -> matchOrNotServer userId passwordManager userRepository contentRepository
+  _ -> throwAll err401

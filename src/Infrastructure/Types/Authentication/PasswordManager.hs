@@ -3,14 +3,14 @@ module Infrastructure.Types.Authentication.PasswordManager
   , PasswordManagerError (..)
   ) where
 
+import Core.Types.Authentication.Credentials     (Credentials, Password)
+import Core.Types.EncryptedPassword              (EncryptedPassword)
+import Core.Types.Id                             (Id)
+import Core.Types.User                           (User)
+
 import Crypto.JWT                                (Error)
 
 import Infrastructure.Types.Authentication.Token (Token)
-
-import MatchOrNot.Authentication.Credentials     (Credentials, Password)
-import MatchOrNot.Types.EncryptedPassword        (EncryptedPassword)
-import MatchOrNot.Types.Id                       (Id)
-import MatchOrNot.Types.User                     (User)
 
 -- |
 -- A 'PasswordManager' is the service dedicated at dealing with password and authentication tokens

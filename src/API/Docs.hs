@@ -19,6 +19,6 @@ docsServer =
   return $
     toOpenApi (Proxy :: Proxy (NamedRoutes MatchOrNotAPI))
       <> toOpenApi (Proxy :: Proxy (NamedRoutes AuthenticationAPI))
-      & info . title .~ "MatchOrNot api"
+      & info . title .~ "Core api"
       & info . version .~ "1.0.0"
       & info . description ?~ "API endpoints for the matchOrNot API"

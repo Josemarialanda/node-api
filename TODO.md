@@ -1,5 +1,6 @@
 # TODO.md
 
 add better error messages
-squash small modules
-major refactor
+refactor
+  * Get rid of redundant modules
+  * Give things more meaningful names

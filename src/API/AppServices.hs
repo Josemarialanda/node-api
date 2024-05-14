@@ -8,20 +8,26 @@ module API.AppServices
 
 import           API.Types.AppServices                               (AppServices (..))
 
+import qualified Application.Authentication                          as Auth
+import qualified Application.Content.Postgres                        as ContentPostgres
+import qualified Application.Types.Authentication                    as Auth
+import qualified Application.Types.User.Error                        as UserPostgres
+import qualified Application.User.Postgres                           as UserPostgres
+
 import           Control.Monad                                       ((<=<))
 import           Control.Monad.Except                                (throwError)
 import           Control.Monad.IO.Class                              (liftIO)
 import           Control.Monad.Trans.Except                          (ExceptT, runExceptT)
 
+import qualified Core.Content                                        as ContentRepository
+import qualified Core.Types.Authentication.Authenticator             as Auth
+import           Core.Types.Content                                  (ContentRepository)
+import           Core.Types.User                                     (UserRepository)
+import qualified Core.User                                           as UserRepository
+
 import           Crypto.JOSE.JWK                                     (JWK)
 
 import           Hasql.Session                                       (QueryError)
-
-import qualified Impl.Authentication                                 as Auth
-import qualified Impl.Content.Postgres                               as ContentPostgres
-import qualified Impl.Types.Authentication                           as Auth
-import qualified Impl.Types.User.Error                               as UserPostgres
-import qualified Impl.User.Postgres                                  as UserPostgres
 
 import qualified Infrastructure.Authentication.PasswordManager       as PasswordManager
 import           Infrastructure.Logger                               (logError, logWarning,
@@ -29,14 +35,8 @@ import           Infrastructure.Logger                               (logError, 
 import           Infrastructure.Types.Authentication.PasswordManager (PasswordManager,
                                                                       PasswordManagerError (..))
 import qualified Infrastructure.Types.Database                       as DB
+import           Infrastructure.Types.Database.Queries               (WrongNumberOfResults (..))
 import qualified Infrastructure.Types.Logger                         as Logger
-import           Infrastructure.Types.Persistence.Queries            (WrongNumberOfResults (..))
-
-import qualified MatchOrNot.Authentication.Authenticator             as Auth
-import qualified MatchOrNot.Content                                  as ContentRepository
-import           MatchOrNot.Types.Content                            (ContentRepository)
-import           MatchOrNot.Types.User                               (UserRepository)
-import qualified MatchOrNot.User                                     as UserRepository
 
 import           Prelude                                             hiding (log)
 
@@ -51,7 +51,7 @@ eitherTToHandler :: (e -> Handler a) -> ExceptT e IO a -> Handler a
 eitherTToHandler handleError = either handleError pure <=< liftIO . runExceptT
 
 -- |
--- Lifts a 'ContentRepository' fo the 'Handler' monad, handling all errors by logging them and returning a 500 response
+-- Lifts a 'ContentRepository' for the 'Handler' monad, handling all errors by logging them and returning a 500 response
 connectedContentRepository
   :: Logger.Handle
   -> ContentRepository (ExceptT QueryError IO)
@@ -61,7 +61,7 @@ connectedContentRepository logHandle =
     (eitherTToHandler $ (>> throwError err500) . logError logHandle . show)
 
 -- |
--- Lifts a 'UserRepository' fo the 'Handler' monad, handling all errors by logging them and returning a 500 response
+-- Lifts a 'UserRepository' for the 'Handler' monad, handling all errors by logging them and returning a 500 response
 connectedUserRepository
   :: Logger.Handle
   -> UserRepository (ExceptT UserPostgres.UserRepositoryError IO)

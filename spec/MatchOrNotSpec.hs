@@ -5,20 +5,20 @@ import           API.Types.Application                     (API, ApplicationAPI 
 import           API.Types.Authentication                  (AuthenticationAPI (..))
 import           API.Types.MatchOrNot                      (MatchOrNotAPI (..))
 
+import           Core.Authentication.Credentials           (Credentials (Credentials),
+                                                            Password (Password))
+import           Core.Content                              (createContent)
+import           Core.Types.Content                        (Content)
+import           Core.Types.Id                             (Id)
+import           Core.Types.Owned                          (Owned (Owned))
+import           Core.Types.Tag                            (Tag (Tag))
+import           Core.Types.User                           (User)
+
 import           Data.ByteString.Lazy                      (toStrict)
 import           Data.Either                               (isRight)
 import           Data.Proxy                                (Proxy (Proxy))
 
 import           Infrastructure.Types.Authentication.Token (Token (Token))
-
-import           MatchOrNot.Authentication.Credentials     (Credentials (Credentials),
-                                                            Password (Password))
-import           MatchOrNot.Content                        (createContent)
-import           MatchOrNot.Types.Content                  (Content)
-import           MatchOrNot.Types.Id                       (Id)
-import           MatchOrNot.Types.Owned                    (Owned (Owned))
-import           MatchOrNot.Types.Tag                      (Tag (Tag))
-import           MatchOrNot.Types.User                     (User)
 
 import           Network.HTTP.Client                       (defaultManagerSettings, newManager)
 import           Network.HTTP.Types.Status                 (Status, forbidden403, unauthorized401)

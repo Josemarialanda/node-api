@@ -6,20 +6,20 @@ module Infrastructure.Authentication.PasswordManager
 import           Control.Category                                    ((>>>))
 import           Control.Monad.Trans.Except                          (ExceptT (ExceptT))
 
+import           Core.EncryptedPassword                              (encryptPassword)
+import qualified Core.EncryptedPassword                              as Encrypted (validatePassword)
+import           Core.Types.Authentication.Credentials               (Credentials,
+                                                                      Password (asBytestring))
+import qualified Core.Types.Authentication.Credentials               as Credentials (password)
+import           Core.Types.EncryptedPassword                        (EncryptedPassword)
+import           Core.Types.Id                                       (Id)
+import           Core.Types.User                                     (User (password))
+
 import           Data.Bifunctor                                      (bimap)
 
 import           Infrastructure.Types.Authentication.PasswordManager (PasswordManager (..),
                                                                       PasswordManagerError (..))
 import           Infrastructure.Types.Authentication.Token           (Token (Token))
-
-import           MatchOrNot.Authentication.Credentials               (Credentials,
-                                                                      Password (asBytestring))
-import qualified MatchOrNot.Authentication.Credentials               as Credentials (password)
-import           MatchOrNot.EncryptedPassword                        (encryptPassword)
-import qualified MatchOrNot.EncryptedPassword                        as Encrypted (validatePassword)
-import           MatchOrNot.Types.EncryptedPassword                  (EncryptedPassword)
-import           MatchOrNot.Types.Id                                 (Id)
-import           MatchOrNot.Types.User                               (User (password))
 
 import           Servant.Auth.Server                                 (JWTSettings, makeJWT)
 

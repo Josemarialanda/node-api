@@ -4,15 +4,14 @@ module API.Authentication
 
 import           API.Types.Authentication                            (AuthenticationAPI (..))
 
+import           Core.Types.Authentication.Authenticator             (Authenticator (authUser))
+import           Core.Types.Authentication.Credentials               (Credentials (username))
+import           Core.Types.Id                                       (Id)
+import           Core.Types.User                                     (User, UserRepository)
+import qualified Core.Types.User                                     as UserRepository
+
 import           Infrastructure.Types.Authentication.PasswordManager (PasswordManager (..))
 import           Infrastructure.Types.Authentication.Token           (Token)
-
-import           MatchOrNot.Authentication.Authenticator             (Authenticator)
-import qualified MatchOrNot.Authentication.Authenticator             as Authenticator
-import           MatchOrNot.Authentication.Credentials               (Credentials (username))
-import           MatchOrNot.Types.Id                                 (Id)
-import           MatchOrNot.Types.User                               (User, UserRepository)
-import qualified MatchOrNot.Types.User                               as UserRepository
 
 import           Servant                                             (Handler)
 import           Servant.Server.Generic                              (AsServer)
@@ -43,6 +42,6 @@ loginEndpoint
   :: PasswordManager Handler -> Authenticator Handler -> Credentials -> Handler Token
 loginEndpoint passwordManager authHandler login' = do
   -- try to authenticate the user
-  user <- Authenticator.authUser authHandler login'
+  user <- authUser authHandler login'
   -- if the user authenticated, generate an authentication token
   generateToken passwordManager user

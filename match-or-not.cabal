@@ -19,7 +19,6 @@ library
       API.Application
       API.AppServices
       API.Authentication
-      API.Config
       API.Docs
       API.HealthCheck
       API.MatchOrNot
@@ -31,39 +30,41 @@ library
       API.Types.HealthCheck
       API.Types.MatchOrNot
       App
+      Application.Authentication
+      Application.Content.Postgres
+      Application.Types.Authentication
+      Application.Types.User.Error
+      Application.User.Postgres
       CLIOptions
-      Impl.Authentication
-      Impl.Content.Postgres
-      Impl.Types.Authentication
-      Impl.Types.User.Error
-      Impl.User.Postgres
+      Core.Authentication.Authenticator
+      Core.Content
+      Core.EncryptedPassword
+      Core.JSONWebKey
+      Core.Types.Authentication.Authenticator
+      Core.Types.Authentication.Credentials
+      Core.Types.Content
+      Core.Types.EncryptedPassword
+      Core.Types.Id
+      Core.Types.Owned
+      Core.Types.Profile
+      Core.Types.Tag
+      Core.Types.User
+      Core.User
       Infrastructure.Authentication.PasswordManager
-      Infrastructure.Database
+      Infrastructure.Config
+      Infrastructure.Database.Database
+      Infrastructure.Database.Queries
+      Infrastructure.Database.Schema
+      Infrastructure.Database.Serializer
       Infrastructure.Logger
-      Infrastructure.Persistence.Queries
-      Infrastructure.Persistence.Schema
-      Infrastructure.Persistence.Serializer
       Infrastructure.SystemTime
       Infrastructure.Types.Authentication.PasswordManager
       Infrastructure.Types.Authentication.Token
       Infrastructure.Types.Database
+      Infrastructure.Types.Database.Queries
+      Infrastructure.Types.Database.Schema
       Infrastructure.Types.Logger
-      Infrastructure.Types.Persistence.Queries
-      Infrastructure.Types.Persistence.Schema
       Infrastructure.Types.SystemTime
-      MatchOrNot.Authentication.Authenticator
-      MatchOrNot.Authentication.Credentials
-      MatchOrNot.Content
-      MatchOrNot.EncryptedPassword
-      MatchOrNot.JSONWebKey
-      MatchOrNot.Types.Content
-      MatchOrNot.Types.EncryptedPassword
-      MatchOrNot.Types.Id
-      MatchOrNot.Types.Owned
-      MatchOrNot.Types.Profile
-      MatchOrNot.Types.Tag
-      MatchOrNot.Types.User
-      MatchOrNot.User
   other-modules:
       Paths_match_or_not
   hs-source-dirs:

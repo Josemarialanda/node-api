@@ -8,10 +8,10 @@ import API.Types.Docs           (DocsAPI)
 import API.Types.HealthCheck    (HealthcheckAPI)
 import API.Types.MatchOrNot     (MatchOrNotAPI)
 
-import GHC.Generics             (Generic)
+import Core.Types.Id            (Id)
+import Core.Types.User          (User)
 
-import MatchOrNot.Types.Id      (Id)
-import MatchOrNot.Types.User    (User)
+import GHC.Generics             (Generic)
 
 import Servant.API              (NamedRoutes, type (:>))
 import Servant.API.Generic      ((:-))

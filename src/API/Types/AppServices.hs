@@ -2,11 +2,11 @@ module API.Types.AppServices
   ( AppServices (..)
   ) where
 
-import Infrastructure.Types.Authentication.PasswordManager (PasswordManager)
+import Core.Types.Authentication.Authenticator             (Authenticator)
+import Core.Types.Content                                  (ContentRepository)
+import Core.Types.User                                     (UserRepository)
 
-import MatchOrNot.Authentication.Authenticator             (Authenticator)
-import MatchOrNot.Types.Content                            (ContentRepository)
-import MatchOrNot.Types.User                               (UserRepository)
+import Infrastructure.Types.Authentication.PasswordManager (PasswordManager)
 
 import Prelude                                             hiding (log)
 
