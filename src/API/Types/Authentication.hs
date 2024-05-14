@@ -1,4 +1,6 @@
-module API.Types.Authentication (AuthenticationAPI (..)) where
+module API.Types.Authentication
+  ( AuthenticationAPI (..)
+  ) where
 
 import GHC.Generics (Generic)
 import Infrastructure.Types.Authentication.Token (Token)

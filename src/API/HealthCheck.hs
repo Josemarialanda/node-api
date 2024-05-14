@@ -1,6 +1,8 @@
-module API.HealthCheck (module API.Types.HealthCheck, healthCheckServer) where
+module API.HealthCheck
+  ( healthCheckServer
+  ) where
 
-import API.Types.HealthCheck
+import API.Types.HealthCheck (HealthcheckAPI)
 import Servant (NoContent (NoContent), Server)
 
 healthCheckServer :: Server HealthcheckAPI

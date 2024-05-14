@@ -1,38 +1,36 @@
 module API.AppServices
-  ( module API.Types.AppServices
-  , connectedAuthenticateUser
+  ( connectedAuthenticateUser
   , connectedContentRepository
   , connectedUserRepository
   , encryptedPasswordManager
   , start
   ) where
 
-import API.Types.AppServices
+import API.Types.AppServices (AppServices (..))
 import Control.Monad ((<=<))
 import Control.Monad.Except (throwError)
 import Control.Monad.IO.Class (liftIO)
 import Control.Monad.Trans.Except (ExceptT, runExceptT)
 import Crypto.JOSE.JWK (JWK)
 import Hasql.Session (QueryError)
-import Impl.Authentication qualified as Auth
-import Impl.Content.Postgres qualified as ContentPostgres
-import Impl.User.Postgres qualified as UserPostgres
-import Infrastructure.Authentication.PasswordManager (PasswordManager, PasswordManagerError (..), bcryptPasswordManager)
-import Infrastructure.Authentication.PasswordManager qualified as PasswordManager
+import qualified Impl.Authentication as Auth
+import qualified Impl.Content.Postgres as ContentPostgres
+import qualified Impl.User.Postgres as UserPostgres
+import Infrastructure.Authentication.PasswordManager (PasswordManager, PasswordManagerError (..),
+                                                      bcryptPasswordManager)
+import qualified Infrastructure.Authentication.PasswordManager as PasswordManager
 import Infrastructure.Logger (logError, logWarning, withContext)
-import Infrastructure.Types.Database qualified as DB
-import Infrastructure.Types.Logger qualified as Logger
-import Infrastructure.Types.Persistence.Queries
-  ( WrongNumberOfResults (..)
-  )
-import MatchOrNot.Authentication.Authenticator qualified as Auth
+import qualified Infrastructure.Types.Database as DB
+import qualified Infrastructure.Types.Logger as Logger
+import Infrastructure.Types.Persistence.Queries (WrongNumberOfResults (..))
+import qualified MatchOrNot.Authentication.Authenticator as Auth
 import MatchOrNot.Content (ContentRepository)
-import MatchOrNot.Content qualified as ContentRepository
+import qualified MatchOrNot.Content as ContentRepository
 import MatchOrNot.Types.User (UserRepository)
-import MatchOrNot.User qualified as UserRepository
+import qualified MatchOrNot.User as UserRepository
+import Prelude hiding (log)
 import Servant (Handler, err401, err403, err500)
 import Servant.Auth.Server (JWTSettings, defaultJWTSettings)
-import Prelude hiding (log)
 
 -- |
 -- Lifts a computation from 'ExceptT e IO' to 'Handler a' using the provided 'handleError' function

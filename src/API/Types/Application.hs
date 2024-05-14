@@ -1,4 +1,7 @@
-module API.Types.Application (API, ApplicationAPI (..)) where
+module API.Types.Application
+  ( API
+  , ApplicationAPI (..)
+  ) where
 
 import API.Types.Authentication (AuthenticationAPI)
 import API.Types.Docs (DocsAPI)
@@ -16,9 +19,9 @@ type API = NamedRoutes ApplicationAPI
 -- |
 -- Collects all the API groups exposed by the application
 data ApplicationAPI mode = ApplicationAPI
-  { matchOrNot :: mode :- Auth '[JWT] (Id User) :> NamedRoutes MatchOrNotAPI
-  , docs :: mode :- DocsAPI
-  , healthCheck :: mode :- HealthcheckAPI
+  { matchOrNot     :: mode :- Auth '[JWT] (Id User) :> NamedRoutes MatchOrNotAPI
+  , docs           :: mode :- DocsAPI
+  , healthCheck    :: mode :- HealthcheckAPI
   , authentication :: mode :- NamedRoutes AuthenticationAPI
   }
   deriving stock (Generic)

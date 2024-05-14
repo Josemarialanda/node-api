@@ -1,7 +1,9 @@
-module API.Docs (module API.Types.Docs, docsServer) where
+module API.Docs
+  ( docsServer
+  ) where
 
 import API.Types.Authentication (AuthenticationAPI)
-import API.Types.Docs
+import API.Types.Docs (DocsAPI)
 import API.Types.MatchOrNot (MatchOrNotAPI)
 import Control.Lens ((&), (.~), (?~))
 import Data.OpenApi (description, info, title, version)

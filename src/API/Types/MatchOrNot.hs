@@ -1,4 +1,6 @@
-module API.Types.MatchOrNot (MatchOrNotAPI (..)) where
+module API.Types.MatchOrNot
+  ( MatchOrNotAPI (..)
+  ) where
 
 import Data.Text (Text)
 import GHC.Generics (Generic)
@@ -7,19 +9,10 @@ import MatchOrNot.Types.Id (Id)
 import MatchOrNot.Types.Owned (Owned)
 import MatchOrNot.Types.Profile (Profile)
 import MatchOrNot.Types.Tag (Tag)
-import Servant (NoContent, Required)
-import Servant.API
-  ( Delete
-  , Get
-  , JSON
-  , Post
-  , QueryParam'
-  , QueryParams
-  , ReqBody
-  , type (:>)
-  )
-import Servant.API.Generic ((:-))
 import Prelude hiding (getContents)
+import Servant (NoContent, Required)
+import Servant.API (Delete, Get, JSON, Post, QueryParam', QueryParams, ReqBody, type (:>))
+import Servant.API.Generic ((:-))
 
 -- |
 -- The main endpoints of the application API

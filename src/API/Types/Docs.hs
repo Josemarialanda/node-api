@@ -1,4 +1,6 @@
-module API.Types.Docs (DocsAPI) where
+module API.Types.Docs
+  ( DocsAPI
+  ) where
 
 import Data.OpenApi (OpenApi)
 import Servant (Get, JSON, (:>))

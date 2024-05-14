@@ -1,21 +1,18 @@
 module App (run) where
 
-import API.AppServices (start)
 import API.Application (app)
-import API.Config qualified as Config
+import API.AppServices (start)
+import qualified API.Config as Config
+import qualified API.Types.Config as Config
 import CLIOptions (CLIOptions (configPath))
-import CLIOptions qualified
-import Infrastructure.Database qualified as DB
-import Infrastructure.Logger qualified as Logger
-import Infrastructure.SystemTime qualified as SystemTime
-import MatchOrNot.JSONWebKey qualified as JWK
+import qualified CLIOptions
+import qualified Infrastructure.Database as DB
+import qualified Infrastructure.Logger as Logger
+import qualified Infrastructure.SystemTime as SystemTime
+import qualified MatchOrNot.JSONWebKey as JWK
 import Network.Wai (Application, Middleware)
-import Network.Wai.Handler.Warp qualified as Warp
-import Network.Wai.Middleware.Cors
-  ( cors
-  , corsRequestHeaders
-  , simpleCorsResourcePolicy
-  )
+import qualified Network.Wai.Handler.Warp as Warp
+import Network.Wai.Middleware.Cors (cors, corsRequestHeaders, simpleCorsResourcePolicy)
 import Network.Wai.Middleware.RequestLogger (logStdoutDev)
 
 -- |
@@ -52,8 +49,8 @@ corsMiddleware = cors (const . Just $ simpleCorsResourcePolicy{corsRequestHeader
 -- Aggregates all effects needed by the app
 data Deps = Deps
   { systemTimeHandler :: SystemTime.Handle
-  , loggerHandle :: Logger.Handle
-  , dbHandle :: DB.Handle
+  , loggerHandle      :: Logger.Handle
+  , dbHandle          :: DB.Handle
   }
 
 -- |

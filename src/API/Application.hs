@@ -1,25 +1,22 @@
-module API.Application (module API.Types.Application, app) where
+module API.Application
+  ( app
+  ) where
 
 import API.Authentication (authenticationServer)
 import API.Docs (docsServer)
 import API.HealthCheck (healthCheckServer)
-import API.MatchOrNot (MatchOrNotAPI, matchOrNotServer)
+import API.MatchOrNot (matchOrNotServer)
+import API.Types.Application (API, ApplicationAPI (..))
 import API.Types.AppServices (AppServices (..))
-import API.Types.Application
+import API.Types.MatchOrNot (MatchOrNotAPI)
 import Data.Proxy (Proxy (..))
-import Infrastructure.Types.Authentication.PasswordManager
-  ( PasswordManager
-  )
+import Infrastructure.Types.Authentication.PasswordManager (PasswordManager)
 import MatchOrNot.Content (ContentRepository)
 import MatchOrNot.Types.Id (Id)
 import MatchOrNot.Types.User (User, UserRepository)
 import Network.Wai (Application)
 import Servant (Context (EmptyContext, (:.)), Handler, err401, serveWithContext)
-import Servant.Auth.Server
-  ( AuthResult (Authenticated)
-  , ThrowAll (throwAll)
-  , defaultCookieSettings
-  )
+import Servant.Auth.Server (AuthResult (Authenticated), ThrowAll (throwAll), defaultCookieSettings)
 import Servant.Server.Generic (AsServer)
 
 -- |

@@ -48,11 +48,7 @@
             hooks = {
               hlint.enable = true;
               hpack.enable = true;
-              fourmolu = {
-                enable = true;
-                verbose = true;
-              };
-
+              stylish-haskell.enable = true;
               nixpkgs-fmt.enable = true;
             };
           };
