@@ -1,5 +1,5 @@
 {
-  description = "Backend for the Node dating app";
+  description = "User authentication API";
 
   inputs = {
     pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
